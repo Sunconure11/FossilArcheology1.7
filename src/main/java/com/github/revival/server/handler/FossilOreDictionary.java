@@ -30,20 +30,21 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("blockGlassColorless", new ItemStack(FABlockRegistry.INSTANCE.strongGlass));
 		OreDictionary.registerOre("blockGlass", new ItemStack(FABlockRegistry.INSTANCE.ancientGlass));
 		OreDictionary.registerOre("glass", new ItemStack(FABlockRegistry.INSTANCE.ancientGlass));
+		OreDictionary.registerOre("dustAsh", new ItemStack(FABlockRegistry.INSTANCE.volcanicAsh));
 
 		OreDictionary.registerOre("artifact", new ItemStack(FAItemRegistry.INSTANCE.relic));
 		OreDictionary.registerOre("fossil", new ItemStack(FAItemRegistry.INSTANCE.biofossil));
 		OreDictionary.registerOre("gemScarab", new ItemStack(FAItemRegistry.INSTANCE.gem));
 		OreDictionary.registerOre("gemScarabBlue", new ItemStack(FAItemRegistry.INSTANCE.gem_blue));
 		OreDictionary.registerOre("gemAmber", new ItemStack(FAItemRegistry.INSTANCE.amber));
-		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.seed));
-		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
 		OreDictionary.registerOre("gemDominicanAmber", new ItemStack(FAItemRegistry.INSTANCE.DominicanAmber));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 1));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 8));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 11));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 14));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 15));
+		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.seed));
+		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
 
 		OreDictionary.registerOre("dinosaurSkull", new ItemStack(FAItemRegistry.INSTANCE.skull, 1, OreDictionary.WILDCARD_VALUE));
 		OreDictionary.registerOre("dinosaurLegBone", new ItemStack(FAItemRegistry.INSTANCE.legBone, 1, OreDictionary.WILDCARD_VALUE));
