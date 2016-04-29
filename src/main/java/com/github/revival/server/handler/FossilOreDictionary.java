@@ -22,11 +22,18 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("treeSapling", new ItemStack(FABlockRegistry.INSTANCE.palmSap));
 		OreDictionary.registerOre("record", new ItemStack(FAItemRegistry.INSTANCE.fossilrecordBones));
 		OreDictionary.registerOre("oreFossil", new ItemStack(FABlockRegistry.INSTANCE.blockFossil));
+		OreDictionary.registerOre("oreAmber", new ItemStack(FABlockRegistry.INSTANCE.amberOre));
+		OreDictionary.registerOre("stoneBasalt", new ItemStack(FABlockRegistry.INSTANCE.volcanicRock));
+		OreDictionary.registerOre("stoneBasaltBricks", new ItemStack(FABlockRegistry.INSTANCE.volcanicBrick));
 
 		OreDictionary.registerOre("artifact", new ItemStack(FAItemRegistry.INSTANCE.relic));
 		OreDictionary.registerOre("fossil", new ItemStack(FAItemRegistry.INSTANCE.biofossil));
 		OreDictionary.registerOre("gemScarab", new ItemStack(FAItemRegistry.INSTANCE.gem));
 		OreDictionary.registerOre("gemScarabBlue", new ItemStack(FAItemRegistry.INSTANCE.gem_blue));
+		OreDictionary.registerOre("gemAmber", new ItemStack(FAItemRegistry.INSTANCE.amber));
+		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.seed));
+		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
+		OreDictionary.registerOre("gemDominicanAmber", new ItemStack(FAItemRegistry.INSTANCE.DominicanAmber));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 1));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 8));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 11));
