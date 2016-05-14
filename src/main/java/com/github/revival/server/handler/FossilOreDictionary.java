@@ -34,6 +34,7 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("blockTar", new ItemStack(FABlockRegistry.INSTANCE.tar));
 		OreDictionary.registerOre("skull", new ItemStack(FABlockRegistry.INSTANCE.blockSkull));
 		OreDictionary.registerOre("denseSand", new ItemStack(FABlockRegistry.INSTANCE.denseSand));
+		OreDictionary.registerOre("skullLantern", new ItemStack(FABlockRegistry.INSTANCE.skullLantern));
 
 		OreDictionary.registerOre("artifact", new ItemStack(FAItemRegistry.INSTANCE.relic));
 		OreDictionary.registerOre("fossil", new ItemStack(FAItemRegistry.INSTANCE.biofossil));
@@ -47,8 +48,10 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 14));
 		OreDictionary.registerOre("dinosaurClaw", new ItemStack(FAItemRegistry.INSTANCE.claw, 1, 15));
 		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.seed));
+		OreDictionary.registerOre("flowerSeed", new ItemStack(FAItemRegistry.INSTANCE.seed));
 		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
 		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
+		OreDictionary.registerOre("sporeFern", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
 		OreDictionary.registerOre("materialRotten", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
 		OreDictionary.registerOre("slimeball", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
 		OreDictionary.registerOre("tar", new ItemStack(FAItemRegistry.INSTANCE.tardrop));
