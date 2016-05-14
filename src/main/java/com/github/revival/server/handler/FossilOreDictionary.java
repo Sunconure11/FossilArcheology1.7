@@ -48,6 +48,7 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("listAllseed", new ItemStack(FAItemRegistry.INSTANCE.fernSeed));
 		OreDictionary.registerOre("materialRotten", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
 		OreDictionary.registerOre("slimeball", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
+		OreDictionary.registerOre("tar", new ItemStack(FAItemRegistry.INSTANCE.tardrop));
 
 		OreDictionary.registerOre("dinosaurSkull", new ItemStack(FAItemRegistry.INSTANCE.skull, 1, OreDictionary.WILDCARD_VALUE));
 		OreDictionary.registerOre("dinosaurLegBone", new ItemStack(FAItemRegistry.INSTANCE.legBone, 1, OreDictionary.WILDCARD_VALUE));
