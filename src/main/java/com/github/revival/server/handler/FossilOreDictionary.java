@@ -56,6 +56,7 @@ public class FossilOreDictionary {
 		OreDictionary.registerOre("materialRotten", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
 		OreDictionary.registerOre("slimeball", new ItemStack(FAItemRegistry.INSTANCE.failuresaurusFlesh));
 		OreDictionary.registerOre("tar", new ItemStack(FAItemRegistry.INSTANCE.tardrop));
+		OreDictionary.registerOre("slimeball", new ItemStack(FAItemRegistry.INSTANCE.tardrop));
 		OreDictionary.registerOre("tarBucket", new ItemStack(FAItemRegistry.INSTANCE.tar_bucket));
 		OreDictionary.registerOre("bucketTar", new ItemStack(FAItemRegistry.INSTANCE.tar_bucket));
 		OreDictionary.registerOre("record", new ItemStack(FAItemRegistry.INSTANCE.recordNano_Anu));
