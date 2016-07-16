@@ -154,7 +154,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("listAllveggie", 15);
         FoodMappings.INSTANCE.addPlant("listAllrootveggie", 15);
         FoodMappings.INSTANCE.addPlant("listAllgreenveggie", 15);
-	FoodMappings.INSTANCE.addPlant("listAllmushroom", 15);
+        FoodMappings.INSTANCE.addPlant("listAllmushroom", 15);
         FoodMappings.INSTANCE.addPlant("listAllberry", 7);
         FoodMappings.INSTANCE.addPlant("cropCamellia", 5);
         FoodMappings.INSTANCE.addPlant("cropCassis", 7);
