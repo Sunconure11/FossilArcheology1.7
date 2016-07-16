@@ -136,7 +136,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addFish(EntityAlligatorGar.class, 20);
         FoodMappings.INSTANCE.removeItemMapping(EnumPrehistoric.Horse.embryoItem, EnumDiet.CARNIVORE_EGG);
 
-        FoodMappings.INSTANCE.addFish("listAllfishraw", 15);
+        FoodMappings.INSTANCE.addFish("listAllfishraw", 5);
         FoodMappings.INSTANCE.addFish("foodOctopuscooked", 30);
         FoodMappings.INSTANCE.addFish("listAllfishcooked", 45);
         FoodMappings.INSTANCE.addFish("foodCalamariraw", 30);
