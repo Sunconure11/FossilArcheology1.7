@@ -165,11 +165,18 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("listAllspice", 10);
         FoodMappings.INSTANCE.addPlant("cropEdibleroot", 7);
         FoodMappings.INSTANCE.addPlant("cropSesame", 5);
+        FoodMappings.INSTANCE.addPlant("listAllpepper", 5);
+        FoodMappings.INSTANCE.addPlant("cropAvocado", 20);
+        FoodMappings.INSTANCE.addPlant("cropDurian", 25);
         FoodMappings.INSTANCE.addPlant("cropTea", 10);
         FoodMappings.INSTANCE.addPlant("cropSpiceleaf", 10);
+        FoodMappings.INSTANCE.addPlant("cropCurryleaf", 10);
+        FoodMappings.INSTANCE.addPlant("cropCoffee", 5);
         FoodMappings.INSTANCE.addPlant("cropNutmeg", 7);
         FoodMappings.INSTANCE.addPlant("cropCoffee", 5);
         FoodMappings.INSTANCE.addPlant("cropCinnamon", 5);
+        FoodMappings.INSTANCE.addPlant("cropVanillabean", 5);
+        FoodMappings.INSTANCE.addPlant("cropMaplesyrup", 5);
         FoodMappings.INSTANCE.addPlant("dropHoney", 7);
         FoodMappings.INSTANCE.addMeat("listAllmeatcooked", 60);
         FoodMappings.INSTANCE.addMeat("listAllmeatraw", 40);
