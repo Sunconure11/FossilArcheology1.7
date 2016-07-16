@@ -144,6 +144,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addFish("foodClamraw", 15);
         FoodMappings.INSTANCE.addFish("foodCrabraw", 10);
         FoodMappings.INSTANCE.addFish("foodCrabcooked", 15);
+        FoodMappings.INSTANCE.addFish("foodShrimpcooked", 13);
         FoodMappings.INSTANCE.addFish("foodSnailcooked", 10);
         FoodMappings.INSTANCE.addFish("foodClamcooked", 22);
         FoodMappings.INSTANCE.addFish("foodCookedClam", 22);
