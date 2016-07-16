@@ -157,7 +157,9 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("treeSapling", 15);
         FoodMappings.INSTANCE.addPlant("listAllgrain", 10);
         FoodMappings.INSTANCE.addPlant("cropRice", 10);
+        FoodMappings.INSTANCE.addPlant("cropCorn", 10);
         FoodMappings.INSTANCE.addPlant("listAllnut", 15);
+        FoodMappings.INSTANCE.addPlant("listAllseed", 5);
         FoodMappings.INSTANCE.addPlant("cropCoconut", 20);
         FoodMappings.INSTANCE.addPlant("listAllherb", 10);
         FoodMappings.INSTANCE.addPlant("listAllspice", 10);
