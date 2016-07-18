@@ -202,6 +202,8 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addMeat("listAllbeefcooked", 60);
         FoodMappings.INSTANCE.addMeat("foodRabbitraw", 10);
         FoodMappings.INSTANCE.addMeat("foodRabbitcooked", 15);
+        FoodMappings.INSTANCE.addMeat("listAllturkeyraw", 15);
+        FoodMappings.INSTANCE.addMeat("listAllturkeycooked", 20);
         FoodMappings.INSTANCE.addMeat("foodTurtleraw", 25);
         FoodMappings.INSTANCE.addMeat("foodTurtlecooked", 40);
         FoodMappings.INSTANCE.addMeat("foodFrograw", 15);
