@@ -231,6 +231,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("cropMaplesyrup", 5);
         FoodMappings.INSTANCE.addPlant("dropHoney", 7);
         FoodMappings.INSTANCE.addPlant("foodSugar", 7);
+        FoodMappings.INSTANCE.addPlant("bamboo", 8);
         FoodMappings.INSTANCE.addMeat("listAllmeatcooked", 60);
         FoodMappings.INSTANCE.addMeat("listAllmeatraw", 40);
         FoodMappings.INSTANCE.addMeat("foodOffal", 10);
