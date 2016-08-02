@@ -247,6 +247,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("groundcoverIvy", 5);
         FoodMappings.INSTANCE.addPlant("floatingDuckweed", 5);
         FoodMappings.INSTANCE.addPlant("grassSwitch", 10);
+        FoodMappings.INSTANCE.addPlant("forestWildMint", 6);
         FoodMappings.INSTANCE.addPlant("plainsReedCanaryGrass", 10);
         FoodMappings.INSTANCE.addPlant("grassSilverMoor", 10);
         FoodMappings.INSTANCE.addPlant("grassSeaOats", 10);
