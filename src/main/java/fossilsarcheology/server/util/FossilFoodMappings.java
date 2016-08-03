@@ -260,6 +260,11 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("beachSeaLymeGrass", 10);
         FoodMappings.INSTANCE.addPlant("grassMeadowFoxtail", 10);
         FoodMappings.INSTANCE.addPlant("shrubLavender", 7);
+        FoodMappings.INSTANCE.addPlant("immersedCommonReed", 7);
+        FoodMappings.INSTANCE.addPlant("immersedDuckPotato", 7);
+        FoodMappings.INSTANCE.addPlant("immersedArrowArum", 8);
+        FoodMappings.INSTANCE.addPlant("immersedGreySedge", 7);
+        FoodMappings.INSTANCE.addPlant("immersedYellowFlag", 8);
         FoodMappings.INSTANCE.addMeat("listAllmeatcooked", 60);
         FoodMappings.INSTANCE.addMeat("listAllmeatraw", 40);
         FoodMappings.INSTANCE.addMeat("foodOffal", 10);
