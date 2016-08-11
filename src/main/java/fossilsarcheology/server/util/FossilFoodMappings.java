@@ -289,6 +289,15 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("floatingWaterLettuce", 8);
         FoodMappings.INSTANCE.addPlant("floatingWaterHyacinth", 7);
         FoodMappings.INSTANCE.addPlant("flowerThistle", 6);
+        FoodMappings.INSTANCE.addPlant("plainsPrairieBrome", 8);
+        FoodMappings.INSTANCE.addPlant("plainsPrairieSage", 7);
+        FoodMappings.INSTANCE.addPlant("plainsShortrayFleabane", 8);
+        FoodMappings.INSTANCE.addPlant("plainsSmallPasqueFlower", 7);
+        FoodMappings.INSTANCE.addPlant("plainsSmoothAster", 8);
+        FoodMappings.INSTANCE.addPlant("plainsThreeFloweredAvens", 7);
+        FoodMappings.INSTANCE.addPlant("floatingRedRootFloater", 8);
+        FoodMappings.INSTANCE.addPlant("floatingWaterChestnut", 7);
+        FoodMappings.INSTANCE.addPlant("floatingWaterLily", 8);
         FoodMappings.INSTANCE.addPlant("cropVine", 6);
         FoodMappings.INSTANCE.addMeat("listAllmeatcooked", 60);
         FoodMappings.INSTANCE.addMeat("listAllmeatraw", 40);
