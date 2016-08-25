@@ -209,6 +209,7 @@ public class FossilFoodMappings {
         FoodMappings.INSTANCE.addPlant("cropHazelnut", 10);
         FoodMappings.INSTANCE.addPlant("cropBeechnut", 10);
         FoodMappings.INSTANCE.addPlant("cropPecan", 10);
+        FoodMappings.INSTANCE.addPlant("cropFlax", 7);
         FoodMappings.INSTANCE.addPlant("cropBanana", 15);
         FoodMappings.INSTANCE.addPlant("cropPlantain", 15);
         FoodMappings.INSTANCE.addPlant("cropBrazilNut", 10);
