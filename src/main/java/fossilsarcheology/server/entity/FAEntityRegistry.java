@@ -28,25 +28,25 @@ public class FAEntityRegistry {
                 registerSpawnable(type.getEntity(), "fossil." + type.name().toLowerCase(), id + 200, type.primaryEggColor, type.secondaryEggColor);
             }
         }
-        registerEntity(JavelinEntity.class, "javelin", 0);
-        registerEntity(AncientJavelinEntity.class, "ancient_javelin", 1);
-        registerEntity(StoneTabletEntity.class, "stone_tablet", 2);
-        registerSpawnable(EntityFailuresaurus.class, "Failuresaurus", 5, 0x61ffbd, 0xf4eee6);
-        registerEntity(EntityDinosaurEgg.class, "DinoEgg", 8);
-        registerEntity(EntityBirdEgg.class, "DinoEgg", 9);
+        registerEntity(JavelinEntity.class, "fossil.javelin", 0);
+        registerEntity(AncientJavelinEntity.class, "fossil.ancient_javelin", 1);
+        registerEntity(StoneTabletEntity.class, "fossil.stone_tablet", 2);
+        registerSpawnable(EntityFailuresaurus.class, "fossil.failuresaurus", 5, 0x61ffbd, 0xf4eee6);
+        registerEntity(EntityDinosaurEgg.class, "fossil.dinoegg", 8);
+        registerEntity(EntityBirdEgg.class, "fossil.birdegg", 9);
 
-        registerEntity(EntityFriendlyPigZombie.class, "FriendlyPigZombie", 12);
-        registerEntity(EntityAnuEffect.class, "AnuEffect", 13);
-        registerEntity(EntityAnuDead.class, "AnuDead", 15);
-        registerSpawnable(EntityTarSlime.class, "TarSlime", 16, 0X222222, 0x0B0B0B);
-        registerSpawnable(EntitySentryPigman.class, "SentryPigman", 18, 15373203, 0XD0A750);
+        registerEntity(EntityFriendlyPigZombie.class, "fossil.friendlypigzombie", 12);
+        registerEntity(EntityAnuEffect.class, "fossil.anueffect", 13);
+        registerEntity(EntityAnuDead.class, "fossil.anudead", 15);
+        registerSpawnable(EntityTarSlime.class, "fossil.tarslime", 16, 0X222222, 0x0B0B0B);
+        registerSpawnable(EntitySentryPigman.class, "fossil.sentrypigman", 18, 15373203, 0XD0A750);
 
-        registerSpawnable(EntityAnubite.class, "Anubite", 39, 0X2E1E14, 0X601200);
-        registerSpawnable(EntityAnu.class, "PigBoss", 17, 0X0F0F0F, 0XF72D00);
+        registerSpawnable(EntityAnubite.class, "fossil.anubite", 39, 0X2E1E14, 0X601200);
+        registerSpawnable(EntityAnu.class, "fossil.anu", 17, 0X0F0F0F, 0XF72D00);
 
-        registerEntity(EntityToyBall.class, "ToyBall", 103);
-        registerEntity(EntityToyTetheredLog.class, "ToyTetheredLog", 104);
-        registerEntity(EntityToyScratchingPost.class, "ToyScratchingPost", 105);
+        registerEntity(EntityToyBall.class, "fossil.toyball", 103);
+        registerEntity(EntityToyTetheredLog.class, "fossil.toytetheredlog", 104);
+        registerEntity(EntityToyScratchingPost.class, "fossil.toyscratchingpost", 105);
 
         Set<Biome> swamps = BiomeDictionary.getBiomes(BiomeDictionary.Type.SWAMP);
         Set<Biome> rivers = BiomeDictionary.getBiomes(BiomeDictionary.Type.RIVER);

@@ -145,7 +145,22 @@ entity.fossil.titanis.name=Titanis
 entity.fossil.triceratops.name=Triceratops
 entity.fossil.tyrannosaurus.name=Tyrannosaurus
 entity.fossil.velociraptor.name=Velociraptor
-
+entity.fossil.javelin.name=Javelin
+entity.fossil.ancient_javelin.name=Ancient Javelin
+entity.fossil.stone_tablet.name=Stone Tablet
+entity.fossil.failuresaurus.name=Failuresaurus
+entity.fossil.dinoegg.name=Dinosaur Egg
+entity.fossil.birdegg.name=Bird Egg
+entity.fossil.friendlypigzombie.name=Friendly Zombie Pigman
+entity.fossil.anueffect.name=Anu Effect
+entity.fossil.anudead.name=Dead Anu
+entity.fossil.tarslime.name=Tar Slime
+entity.fossil.sentrypigman.name=Sentry Pigman
+entity.fossil.anubite.name=Anubite
+entity.fossil.anu.name=Anu
+entity.fossil.toyball.name=Ball
+entity.fossil.toytetheredlog.name=Tethered Log
+entity.fossil.toyscratchingpost.name=Scratching Post
 #PORT
 tile.skullBlock.name=Skull Block
 tile.skullLantern.name=Skull Lantern
