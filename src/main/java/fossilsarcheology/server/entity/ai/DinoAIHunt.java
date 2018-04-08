@@ -20,6 +20,9 @@ public class DinoAIHunt<T extends EntityLivingBase> extends EntityAINearestAttac
 
     @Override
     public boolean shouldExecute() {
+        if(this.dragon.isBeingRidden()){
+            return false;
+        }
         if (super.shouldExecute() && this.targetEntity != null && !this.targetEntity.getClass().equals(this.dragon.getClass())) {
             if (this.dragon.width >= this.targetEntity.width) {
                 if (this.taskOwner instanceof EntityPrehistoric) {
@@ -36,11 +39,11 @@ public class DinoAIHunt<T extends EntityLivingBase> extends EntityAINearestAttac
                         }else if(prehistoric.getMood() > 25 && prehistoric.getMoodFace() != PrehistoricMoodType.CALM){
                             return false;
                         }else if(prehistoric.getMoodFace() == PrehistoricMoodType.CALM){
-                            return !prehistoric.func_152114_e(targetEntity) && prehistoric.canDinoHunt(targetEntity, true);
+                            return !prehistoric.isOwner(targetEntity) && prehistoric.canDinoHunt(targetEntity, true);
                         }
                     }
                     if (FoodMappings.INSTANCE.getEntityFoodAmount(this.targetEntity.getClass(), prehistoric.type.diet) > 0) {
-                        return !prehistoric.func_152114_e(targetEntity) && prehistoric.canDinoHunt(targetEntity, true);
+                        return !prehistoric.isOwner(targetEntity) && prehistoric.canDinoHunt(targetEntity, true);
                     }
                     if (targetEntity instanceof EntityToyBase && prehistoric.ticksTillPlay == 0) {
                         return true;

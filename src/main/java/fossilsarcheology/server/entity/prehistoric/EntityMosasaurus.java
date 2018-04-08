@@ -168,7 +168,7 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
 
     @Override
     public void updateRidden() {
-        if(this.getRidingPlayer() != null && this.func_152114_e(this.getRidingPlayer())){
+        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
             super.updateRidden();
             return;
         }

@@ -115,22 +115,22 @@ public class FossilLivingEvent {
 			birthEntity = new EntitySmilodon(entity.world);
 			if (entity.world.getClosestPlayerToEntity(entity, 15) != null) {
 				((EntitySmilodon) birthEntity).setTamed(true);
-				((EntitySmilodon) birthEntity).func_152115_b(entity.world.getClosestPlayerToEntity(entity, 15).getDisplayNameString());
+				((EntitySmilodon) birthEntity).setOwnerId(entity.world.getClosestPlayerToEntity(entity, 15).getUniqueID());
 			}
 			break;
 		case MAMMOTH:
 			birthEntity = (new EntityMammoth(entity.world));
-			((EntityPrehistoric) birthEntity).func_152114_e(entity.world.getClosestPlayerToEntity(((EntityPrehistoric) birthEntity), 8));
+			((EntityPrehistoric) birthEntity).setOwnerId(entity.world.getClosestPlayerToEntity(entity, 15).getUniqueID());
 			if (entity.world.getClosestPlayerToEntity(entity, 15) != null) {
 				((EntityPrehistoric) birthEntity).setTamed(true);
-				((EntityPrehistoric) birthEntity).func_152115_b(entity.world.getClosestPlayerToEntity(entity, 15).getDisplayNameString());
+				((EntityPrehistoric) birthEntity).setOwnerId(entity.world.getClosestPlayerToEntity(entity, 15).getUniqueID());
 			}
 			break;
 			case ELASMOTHERIUM:
 			birthEntity = (new EntityElasmotherium(entity.world));
 			if (entity.world.getClosestPlayerToEntity(entity, 15) != null) {
 				((EntityPrehistoric) birthEntity).setTamed(true);
-				((EntityPrehistoric) birthEntity).func_152115_b(entity.world.getClosestPlayerToEntity(entity, 15).getDisplayNameString());
+				((EntityPrehistoric) birthEntity).setOwnerId(entity.world.getClosestPlayerToEntity(entity, 15).getUniqueID());
 			}
 			break;
 		case QUAGGA:

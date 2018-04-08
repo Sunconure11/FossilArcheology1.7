@@ -43,6 +43,8 @@ public class DinoAIFollowOwner extends EntityAIBase {
             return false;
         } else if (this.prehistoric.currentOrder != OrderType.FOLLOW) {
             return false;
+        } else if (entitylivingbase.isRidingOrBeingRiddenBy(this.prehistoric)) {
+            return false;
         } else if (this.prehistoric.getDistanceSq(entitylivingbase) < (double) (this.minDist * this.minDist)) {
             return false;
         } else {

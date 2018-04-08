@@ -282,7 +282,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
     @Override
     public boolean isMovementBlocked() {
-        return this.getHealth() <= 0.0F || isSitting() || isSleeping() || this.isSkeleton() || this.isActuallyWeak();
+        return this.getHealth() <= 0.0F || isSitting() || isSleeping() || this.isSkeleton() || this.isActuallyWeak() || this.isBeingRidden();
     }
 
     public boolean isSleeping() {
@@ -589,10 +589,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
         }
     }
 
-    public EntityLivingBase getOwner() {
-        return this.world.getPlayerEntityByName(this.getOwnerDisplayName());
-    }
-
     public boolean isBreedingItem(ItemStack stack) {
         return false;
     }
@@ -625,18 +621,20 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             super.travel(0, 0, 0);
             return;
         }
-        if (this.isBeingRidden()) {
+        if (this.isBeingRidden() && this.canBeSteered()) {
             EntityLivingBase controller = (EntityLivingBase) this.getControllingPassenger();
             if (controller != null) {
+                if(this.getAttackTarget() != null){
+                    this.setAttackTarget(null);
+                    this.getNavigator().clearPath();
+                }
                 strafe = controller.moveStrafing * 0.5F;
                 forward = controller.moveForward;
-                if (forward <= 0.0F) {
-                    forward *= 0.25F;
-                }
                 this.fallDistance = 0;
-                super.travel(strafe, vertical = 0, forward);
+                this.isJumping = false;
                 this.setAIMoveSpeed(onGround ? (float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() : 2);
-            return;
+                super.travel(strafe, vertical, forward);
+                return;
             }
         }
         super.travel(strafe, vertical, forward);
@@ -1129,7 +1127,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             if (itemstack != ItemStack.EMPTY) {
                 if (itemstack.getItem() != null) {
                     if ((this.aiTameType() == PrehistoricEntityTypeAI.Taming.GEM && itemstack.getItem() == FAItemRegistry.SCARAB_GEM) || (this.aiTameType() == PrehistoricEntityTypeAI.Taming.BLUEGEM && itemstack.getItem() == FAItemRegistry.AQUATIC_SCARAB_GEM)) {
-                        if (!this.isTamed() && !this.func_152114_e(player) && this.isActuallyWeak()) {
+                        if (!this.isTamed() && !this.isOwner(player) && this.isActuallyWeak()) {
                             this.triggerTamingAcheivement(player);
                             this.heal(200);
                             this.setMood(100);
@@ -1137,7 +1135,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                             this.setTamed(true);
                             this.getNavigator().clearPath();
                             setAttackTarget(null);
-                            this.func_152115_b(player.getDisplayName().toString());
+                            this.setOwnerId(player.getUniqueID());
                             itemstack.shrink(1);
                             return true;
                         }
@@ -1189,7 +1187,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                             if (this.aiTameType() == PrehistoricEntityTypeAI.Taming.FEEDING) {
                                 if (!this.isTamed() && this.type.isTameable() && (new Random()).nextInt(10) == 1) {
                                     this.setTamed(true);
-                                    this.func_152115_b(player.getDisplayName().toString());
+                                    this.setOwnerId(player.getUniqueID());
                                     this.world.setEntityState(this, (byte) 35);
                                 }
                             }
@@ -1206,7 +1204,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                 } else {
 
                     if (itemstack.getItem() == Items.LEAD && this.isTamed()) {
-                        if (func_152114_e(player)) {
+                        if (this.isOwner(player)) {
                             this.setLeashHolder(player, true);
                             itemstack.shrink(1);
                             return true;
@@ -1220,7 +1218,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                     }
 
                     if (itemstack.getItem() == FAItemRegistry.WHIP && this.aiTameType() != PrehistoricEntityTypeAI.Taming.NONE && this.isAdult() && !this.world.isRemote) {
-                        if (this.isTamed() && func_152114_e(player) && this.canBeRidden()) {
+                        if (this.isTamed() && isOwner(player) && this.canBeRidden()) {
                             if (this.getRidingPlayer() == null) {
                                 Revival.NETWORK_WRAPPER.sendToAll(new MessageFoodParticles(getEntityId(), FABlockRegistry.VOLCANIC_ROCK));
                                 this.setOrder(OrderType.WANDER);
@@ -1240,7 +1238,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                                 this.setMood(this.getMood() - 25);
                                 this.setTamed(true);
                                 Revival.NETWORK_WRAPPER.sendToAll(new MessageFoodParticles(getEntityId(), Item.getIdFromItem(Items.GOLD_INGOT)));
-                                this.func_152115_b(player.getDisplayName().toString());
+                                this.setOwnerId(player.getUniqueID());
                             }
                         }
                         this.setSitting(false);
@@ -1249,7 +1247,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                         // this.currentOrder = OrderType.FreeMove;
                         // setRidingPlayer(player);
                     }
-                    if (this.getOrderItem() != null && itemstack.getItem() == this.getOrderItem() && this.isTamed() && this.getOwnerDisplayName().equals(player.getName().toString()) && !player.isRiding()) {
+                    if (this.getOrderItem() != null && itemstack.getItem() == this.getOrderItem() && this.isTamed() && this.isOwner(player) && !player.isRiding()) {
                         if (!this.world.isRemote) {
                             this.isJumping = false;
                             this.getNavigator().clearPath();
@@ -1282,7 +1280,9 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
     private void sendOrderMessage(OrderType var1) {
         String s = I18n.format("order.head") + I18n.format("order." + var1.toString().toLowerCase());
-        this.world.getPlayerEntityByName(this.getOwnerDisplayName()).sendStatusMessage(new TextComponentString(s), false);
+        if(this.getOwner() instanceof EntityPlayer){
+            ((EntityPlayer)this.getOwner()).sendStatusMessage(new TextComponentString(s), false);
+        }
     }
 
     public void nudgeEntity(EntityPlayer player) {
@@ -1330,15 +1330,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             String toggleList = this.hasFeatherToggle ? this.featherToggle ? "_feathered" : "_scaled" : "";
             return "fossil:textures/model/" + type.toString().toLowerCase() + "_0/" + toggle + type.toString().toLowerCase() + gender + toggleList + sleeping + ".png";
         }
-    }
-
-    public boolean func_152114_e(EntityLivingBase entity) {
-        if (entity != null) {
-            String s = entity.getDisplayName().toString();
-            System.out.println(this.getOwnerDisplayName());
-            return s != null && this.getOwnerDisplayName() != null && this.getOwnerDisplayName().equals(s);
-        }
-        return false;
     }
 
     public boolean isActuallyWeak() {
@@ -1418,10 +1409,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
     }
 
-    public void func_152115_b(String name) {
-        this.setOwnerDisplayName(name);
-    }
-
     @Override
     public void knockBack(Entity entity, float f, double x, double z) {
         if (entity != null && entity instanceof EntityPrehistoric) {
@@ -1499,7 +1486,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     public abstract boolean canBeRidden();
 
     public boolean canBeSteered() {
-        return canBeRidden() && (this.getRidingPlayer() != null && this.func_152114_e(this.getRidingPlayer()));
+        return canBeRidden() && (this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer()));
     }
 
     public void procreate(EntityPrehistoric mob) {
@@ -1659,7 +1646,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             } else {
                 if (entity instanceof EntityPlayer) {
                     EntityPlayer player = (EntityPlayer) entity;
-                    if (this.getOwner() == player) {
+                    if (this.isOwner(player)) {
                         return false;
                     }
                 }
@@ -1701,12 +1688,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             renderYawOffset = rotationYaw;
             this.rotationYaw = passenger.rotationYaw;
         }
-        if (this.getControllingPassenger() != null) {
-            if (this.getControllingPassenger() instanceof EntityPlayer) {
-                this.setPosition(posX, posY - ((EntityPlayer) this.getControllingPassenger()).getYOffset(), posZ);
-            }
-        }
-        if (this.func_152114_e(this.getRidingPlayer()) && this.getAttackTarget() != this.getRidingPlayer()) {
+        if (this.isOwner(this.getRidingPlayer()) && this.getAttackTarget() != this.getRidingPlayer()) {
             rotationYaw = renderYawOffset;
             rotationYaw = this.getRidingPlayer().rotationYaw;
             float radius = ridingXZ * (0.7F * getAgeScale()) * -3;
