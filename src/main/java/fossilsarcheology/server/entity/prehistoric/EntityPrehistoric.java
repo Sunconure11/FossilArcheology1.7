@@ -206,7 +206,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     @Override
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
-        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.30000001192092896D);
+        this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(this.maxSpeed);
         this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(20);
         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
         this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1D);
@@ -1695,7 +1695,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             float angle = (0.01745329251F * this.renderYawOffset);
             double extraX = (double) (radius * MathHelper.sin((float) (Math.PI + angle)));
             double extraZ = (double) (radius * MathHelper.cos(angle));
-            double extraY = ridingY * (getAgeScale());
+            double extraY = ridingY * (getAgeScale()) * 0.75;
             float spinosaurusAddition = 0;
             if (this instanceof EntitySpinosaurus) {
                 spinosaurusAddition = -(((EntitySpinosaurus) this).swimProgress * 0.1F);
