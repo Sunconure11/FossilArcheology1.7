@@ -5,6 +5,7 @@ import fossilsarcheology.server.entity.prehistoric.PrehistoricEntityType;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.projectile.EntityThrowable;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumParticleTypes;
@@ -16,6 +17,13 @@ public class EntityBirdEgg extends EntityThrowable {
     public Item item;
     PrehistoricEntityType type;
     boolean cultivated;
+
+    public EntityBirdEgg(World par1World) {
+        super(par1World);
+        this.type = PrehistoricEntityType.CHICKEN;
+        this.cultivated = false;
+        this.item = Items.EGG;
+    }
 
     public EntityBirdEgg(PrehistoricEntityType type, boolean cultivated, World par1World, Item item) {
         super(par1World);

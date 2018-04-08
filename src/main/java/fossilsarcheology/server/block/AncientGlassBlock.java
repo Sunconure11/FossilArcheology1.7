@@ -2,6 +2,7 @@ package fossilsarcheology.server.block;
 
 import fossilsarcheology.server.api.DefaultRenderedItem;
 import fossilsarcheology.server.tab.FATabRegistry;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockBreakable;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -9,6 +10,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -28,14 +30,25 @@ public class AncientGlassBlock extends BlockBreakable implements DefaultRendered
     public AncientGlassBlock() {
         super(Material.GLASS, true);
         this.setLightOpacity(1);
-        this.setUnlocalizedName("ancientGlass");
+        this.setUnlocalizedName("ancient_glass");
         this.setSoundType(SoundType.GLASS);
         this.setHardness(1F);
         this.setCreativeTab(FATabRegistry.BLOCKS);
-        this.setDefaultState(this.blockState.getBaseState().withProperty(CONNECTED_DOWN, Boolean.FALSE).withProperty(CONNECTED_EAST, Boolean.FALSE).withProperty(CONNECTED_NORTH, Boolean.FALSE).withProperty(CONNECTED_SOUTH, Boolean.FALSE).withProperty(CONNECTED_UP, Boolean.FALSE).withProperty(CONNECTED_WEST, Boolean.FALSE));
+        //this.setDefaultState(this.blockState.getBaseState().withProperty(CONNECTED_DOWN, Boolean.FALSE).withProperty(CONNECTED_EAST, Boolean.FALSE).withProperty(CONNECTED_NORTH, Boolean.FALSE).withProperty(CONNECTED_SOUTH, Boolean.FALSE).withProperty(CONNECTED_UP, Boolean.FALSE).withProperty(CONNECTED_WEST, Boolean.FALSE));
     }
 
-    @Override
+    @SideOnly(Side.CLIENT)
+    public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side) {
+        IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side));
+        Block block = iblockstate.getBlock();
+        if (blockState != iblockstate) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
+   /* @Override
     protected BlockStateContainer createBlockState () {
         return new BlockStateContainer(this, new IProperty[] { CONNECTED_DOWN, CONNECTED_UP, CONNECTED_NORTH, CONNECTED_SOUTH, CONNECTED_WEST, CONNECTED_EAST });
     }
@@ -54,10 +67,11 @@ public class AncientGlassBlock extends BlockBreakable implements DefaultRendered
         final IBlockState state = world.getBlockState(pos.offset(side));
         return (state == null) ? false : state.getBlock() == this;
     }
+    */
 
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.CUTOUT;
+        return BlockRenderLayer.TRANSLUCENT;
     }
 
     public boolean isFullCube(IBlockState state) {
