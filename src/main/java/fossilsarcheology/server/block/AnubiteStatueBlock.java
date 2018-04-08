@@ -38,6 +38,10 @@ public class AnubiteStatueBlock extends BlockContainer implements DefaultRendere
         return super.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer).withProperty(FACING, placer.getHorizontalFacing().getOpposite());
     }
 
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     @Override
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {

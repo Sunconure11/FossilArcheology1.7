@@ -5,6 +5,7 @@ import fossilsarcheology.server.tab.FATabRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.IStringSerializable;
 
 public class SarraceniaFlowerBlock extends Block implements DefaultRenderedItem {
@@ -14,6 +15,10 @@ public class SarraceniaFlowerBlock extends Block implements DefaultRenderedItem 
         setCreativeTab(FATabRegistry.BLOCKS);
         setUnlocalizedName("sarracenia_flower");
         setSoundType(SoundType.PLANT);
+    }
+
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
     
     public static enum EnumPlantTypes implements IStringSerializable

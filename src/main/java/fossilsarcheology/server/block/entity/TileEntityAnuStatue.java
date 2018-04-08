@@ -5,6 +5,9 @@ import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.entity.utility.EntityAnuEffect;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -51,5 +54,17 @@ public class TileEntityAnuStatue extends TileEntity implements ITickable {
             world.setBlockToAir(new BlockPos(pos.getX(), pos.getY() + 1, pos.getZ()));
 
         }
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
     }
 }

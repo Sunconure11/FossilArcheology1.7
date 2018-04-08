@@ -74,8 +74,9 @@ public class DinoAIEatFeeders extends EntityAIBase {
         if (prehistoric.isMovementBlocked()) {
             return false;
         }
-        if (prehistoric.world.getBlockState(targetBlock) instanceof FeederBlock && prehistoric.world.getTileEntity(targetBlock) != null && prehistoric.world.getTileEntity(targetBlock) instanceof TileEntityFeeder) {
+        if (prehistoric.world.getTileEntity(targetBlock) != null && prehistoric.world.getTileEntity(targetBlock) instanceof TileEntityFeeder) {
             return true;
+
         }
         return false;
     }
@@ -88,7 +89,7 @@ public class DinoAIEatFeeders extends EntityAIBase {
     @Override
     public void updateTask() {
         if (targetBlock != null) {
-            if (prehistoric.world.getBlockState(targetBlock) instanceof FeederBlock && prehistoric.world.getTileEntity(targetBlock) != null && prehistoric.world.getTileEntity(targetBlock) instanceof TileEntityFeeder) {
+            if (prehistoric.world.getTileEntity(targetBlock) != null && prehistoric.world.getTileEntity(targetBlock) instanceof TileEntityFeeder) {
                 TileEntityFeeder feeder = (TileEntityFeeder) prehistoric.world.getTileEntity(targetBlock);
                 double d0 = prehistoric.getDistance(this.targetBlock.getX(), this.targetBlock.getY(), this.targetBlock.getZ());
                 if (d0 * d0 < 6) {

@@ -37,6 +37,10 @@ public class SarcophagusBlock extends BlockContainer implements DefaultRenderedI
 
     }
 
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing side, float hitX, float hitY, float hitZ){
         TileEntitySarcophagus tile = (TileEntitySarcophagus) world.getTileEntity(pos);

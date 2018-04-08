@@ -133,6 +133,22 @@ public class GuiPedia extends GuiScreen {
 
             int drawSize = zoom * 16;
 
+            if (item != null && item.getItem() != null) {
+                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+                net.minecraft.client.gui.FontRenderer font = null;
+                this.itemRender.renderItemAndEffectIntoGUI(item, x, y);
+                this.itemRender.renderItemOverlayIntoGUI(font, item, x, y, null);
+                if (mouseX > x && mouseX < x + drawSize) {
+                    if (mouseY > y && mouseY < y + drawSize) {
+                        List<String> text = new ArrayList<String>();
+                        String s1 = item.getDisplayName();
+                        text.add(s1);
+                        this.drawHoveringText(text, (-this.fontRenderer.getStringWidth(s1) / 2) + 280, 222, fontRenderer);
+                    }
+                }
+                return true;
+            }
+
             if (drawSize < 0) {
                 drawSize = 4;
             }
@@ -143,24 +159,6 @@ public class GuiPedia extends GuiScreen {
 
             if (drawSize > 160) {
                 drawSize = 160;
-            }
-
-            GL11.glDisable(GL11.GL_LIGHTING);
-            if (item != null && item.getItem() != null) {
-                GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-                net.minecraft.client.gui.FontRenderer font = null;
-                this.itemRender.renderItemAndEffectIntoGUI(item, x, y);
-                this.itemRender.renderItemOverlayIntoGUI(font, item, x, y, null);
-                GL11.glEnable(GL11.GL_LIGHTING);
-                if (mouseX > x && mouseX < x + drawSize) {
-                    if (mouseY > y && mouseY < y + drawSize) {
-                        List<String> text = new ArrayList<String>();
-                        String s1 = item.getDisplayName();
-                        text.add(s1);
-                        this.drawHoveringText(text, (-this.fontRenderer.getStringWidth(s1) / 2) + 280, 222, fontRenderer);
-                    }
-                }
-                return true;
             }
         }
         return false;
@@ -495,58 +493,53 @@ public class GuiPedia extends GuiScreen {
                 this.drawTexturedModalRect(293 - dino.getScaledMood(), 43, 0, 26, 4, 10);
                 GL11.glPopMatrix();
             }
-
+            ScaledResolution scaledResolution = new ScaledResolution(mc);
+            final int width = scaledResolution.getScaledWidth();
+            final int height = scaledResolution.getScaledHeight();
+            final int mouseX = (Mouse.getX() * width / mc.displayWidth) - guiLeft;
+            final int mouseY = (height - Mouse.getY() * height / mc.displayHeight - 1) - guiTop;
             {
-                {
-                    ScaledResolution scaledResolution = new ScaledResolution(mc);
-                    final int width = scaledResolution.getScaledWidth();
-                    final int height = scaledResolution.getScaledHeight();
-                    final int mouseX = (Mouse.getX() * width / mc.displayWidth) - guiLeft;
-                    final int mouseY = (height - Mouse.getY() * height / mc.displayHeight - 1) - guiTop;
-                    int x = 218;
-                    int y = 40;
-                    if (mouseX > x && mouseX < x + 154) {
-                        if (mouseY > y && mouseY < y + 13) {
-                            List<String> text = new ArrayList<String>();
-                            text.add(I18n.format("pedia.moodstatus") + dino.getMoodFace().color + dino.getMood());
-                            GL11.glPushMatrix();
-                            this.drawHoveringText(text, mouseX, mouseY, fontRenderer);
-                            GL11.glPopMatrix();
-                        }
-                    }
-                }
-                {
-                    ScaledResolution scaledResolution = new ScaledResolution(mc);
-                    final int width = scaledResolution.getScaledWidth();
-                    final int height = scaledResolution.getScaledHeight();
-                    final int mouseX = (Mouse.getX() * width / mc.displayWidth) - guiLeft;
-                    final int mouseY = (height - Mouse.getY() * height / mc.displayHeight - 1) - guiTop;
-                    int x = 280;
-                    int y = 10;
-                    if (mouseX > x && mouseX < x + 28) {
-                        if (mouseY > y && mouseY < y + 28) {
-                            List<String> text = new ArrayList<String>();
-                            text.add(dino.getMoodFace().color + I18n.format(I18n.format("pedia.") + dino.getMoodFace().toString().toLowerCase()));
-                            text.add(ChatFormatting.GRAY + I18n.format(I18n.format("pedia.") + dino.getMoodFace().toString().toLowerCase() + I18n.format(".desc")));
-                            GL11.glPushMatrix();
-                            this.drawHoveringText(text, mouseX, mouseY, fontRenderer);
-                            GL11.glPopMatrix();
-                        }
+
+                int x = 218;
+                int y = 40;
+                if (mouseX > x && mouseX < x + 154) {
+                    if (mouseY > y && mouseY < y + 13) {
+                        List<String> text = new ArrayList<String>();
+                        text.add(I18n.format("pedia.moodstatus") + dino.getMoodFace().color + dino.getMood());
+                        GL11.glPushMatrix();
+                        this.drawHoveringText(text, mouseX, mouseY, fontRenderer);
+                        GL11.glPopMatrix();
                     }
                 }
             }
-            Map<ItemStack, Integer> foodMap = FoodMappings.INSTANCE.getFoodRenderList(dino.type.diet);
-            List<ItemStack> keys = Collections.list(Collections.enumeration(foodMap.keySet()));
-            Collections.sort(keys, this.sorter);
-            ItemStack[] keyArray = keys.toArray(new ItemStack[0]);
-            for (ItemStack item : keyArray) {
-                if (items < 64) {
-                    addMiniItem(item);
+            {
+                int x = 280;
+                int y = 10;
+                if (mouseX > x && mouseX < x + 28) {
+                    if (mouseY > y && mouseY < y + 28) {
+                        List<String> text = new ArrayList<String>();
+                        text.add(dino.getMoodFace().color + I18n.format(I18n.format("pedia.") + dino.getMoodFace().toString().toLowerCase()));
+                        text.add(ChatFormatting.GRAY + I18n.format(I18n.format("pedia.") + dino.getMoodFace().toString().toLowerCase() + I18n.format(".desc")));
+                        GL11.glPushMatrix();
+                        this.drawHoveringText(text, mouseX, mouseY, fontRenderer);
+                        GL11.glPopMatrix();
+                    }
                 }
+
+                Map<ItemStack, Integer> foodMap = FoodMappings.INSTANCE.getFoodRenderList(dino.type.diet);
+                List<ItemStack> keys = Collections.list(Collections.enumeration(foodMap.keySet()));
+                Collections.sort(keys, this.sorter);
+                ItemStack[] keyArray = keys.toArray(new ItemStack[0]);
+                for (ItemStack item : keyArray) {
+                    if (item != ItemStack.EMPTY && item != null) {
+                        if (items < 64) {
+                            addMiniItem(item);
+                        }
+                    }
+
+                }
+
             }
-
-        } else {
-
         }
     }
 

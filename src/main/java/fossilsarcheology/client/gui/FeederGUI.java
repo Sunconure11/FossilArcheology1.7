@@ -7,6 +7,8 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
@@ -31,6 +33,7 @@ public class FeederGUI extends GuiContainer {
     /**
      * Draws the screen and all the components in it.
      */
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         this.drawDefaultBackground();
@@ -53,7 +56,7 @@ public class FeederGUI extends GuiContainer {
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         InventoryPlayer playerInventory = this.mc.player.inventory;
 
-        if (playerInventory.getItemStack() != null) {
+        if (playerInventory.getItemStack() != ItemStack.EMPTY) {
             GL11.glTranslatef(0.0F, 0.0F, 32.0F);
             this.zLevel = 200.0F;
             itemRender.zLevel = 200.0F;
@@ -69,6 +72,7 @@ public class FeederGUI extends GuiContainer {
         GL11.glEnable(GL11.GL_LIGHTING);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         RenderHelper.enableStandardItemLighting();
+        this.renderHoveredToolTip(mouseX, mouseY);
     }
 
     /**
@@ -89,4 +93,6 @@ public class FeederGUI extends GuiContainer {
         int var8 = this.FeederInventory.getVegBarScaled(46);
         this.drawTexturedModalRect(var5 + 110, var6 + 55 - var8, 176, 46 - var8, 3, var8);
     }
+
+
 }

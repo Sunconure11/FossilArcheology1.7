@@ -2,6 +2,9 @@ package fossilsarcheology.server.block.entity;
 
 import fossilsarcheology.server.entity.monster.EntityAnu;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
@@ -35,5 +38,22 @@ public class TileEntitySarcophagus extends TileEntity implements ITickable {
                chestState = 0;
             }
         }
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 0, tag);
+    }
+
+    public NBTTagCompound getUpdateTag() {
+        return this.writeToNBT(new NBTTagCompound());
+    }
+
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
     }
 }

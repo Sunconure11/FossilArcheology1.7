@@ -12,6 +12,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -51,8 +53,8 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
 
     @Nullable
     @Override
-    public ItemStack decrStackSize(int index, int count) {
-        return null;
+    public ItemStack decrStackSize(int slot, int amount) {
+        return ItemStackHelper.getAndSplit(this.stacks, slot, amount);
     }
 
     @Override
@@ -146,7 +148,7 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
     }
 
     private int timeToSmelt() {
-        if (this.stacks.get(0) == null) {
+        if (this.stacks.get(0) == ItemStack.EMPTY) {
             return 3000;
         }
 
@@ -177,7 +179,7 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
                 if (this.furnaceBurnTime > 0) {
                     var2 = true;
 
-                    if (this.stacks.get(1) != null) {
+                    if (this.stacks.get(1) != ItemStack.EMPTY) {
                         if (this.stacks.get(1).getItem().hasContainerItem(null)) {
                             this.stacks.set(1, new ItemStack(this.stacks.get(1).getItem().getContainerItem()));
                         } else {
@@ -332,7 +334,7 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
         if (this.canSmelt()) {
             ItemStack var1 = this.checkSmelt(this.stacks.get(0));
 
-            if (this.stacks.get(2) == null) {
+            if (this.stacks.get(2) == ItemStack.EMPTY) {
                 if (var1 != null) {
                     this.stacks.set(2, var1.copy());
                 }
@@ -340,7 +342,7 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
                 this.stacks.get(2).grow(var1.getCount());
             }
 
-            if (this.stacks.get(0).getItem().hasContainerItem(null)) {
+            if (this.stacks.get(0).getItem().hasContainerItem(ItemStack.EMPTY)) {
                 this.stacks.set(0, new ItemStack(this.stacks.get(0).getItem().getContainerItem()));
             } else {
                 this.stacks.get(0).shrink(1);
@@ -353,19 +355,19 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
     }
 
     private boolean canSmelt() {
-        if (this.stacks.get(0) == null) {
+        if (this.stacks.get(0) == ItemStack.EMPTY) {
             return false;
         } else {
             // ItemStack var1 =
             // this.CheckSmelt(this.stacks.get(0).getItem());
             ItemStack var1 = this.checkSmelt(this.stacks.get(0));
-            return var1 != null && (this.stacks.get(2) == null || (this.stacks.get(2).isItemEqual(var1) && (this.stacks.get(2).getCount() < this.getInventoryStackLimit() && this.stacks.get(2).getCount() < this.stacks.get(2).getMaxStackSize() || this.stacks.get(2).getCount() < var1.getMaxStackSize())));
+            return var1 != ItemStack.EMPTY && (this.stacks.get(2) == ItemStack.EMPTY || (this.stacks.get(2).isItemEqual(var1) && (this.stacks.get(2).getCount() < this.getInventoryStackLimit() && this.stacks.get(2).getCount() < this.stacks.get(2).getMaxStackSize() || this.stacks.get(2).getCount() < var1.getMaxStackSize())));
         }
     }
 
 
     private int getItemBurnTime(ItemStack itemstack) {
-        if (itemstack == null) {
+        if (itemstack == ItemStack.EMPTY) {
             return 0;
         } else {
             Item var2 = itemstack.getItem();
@@ -397,7 +399,7 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
     public void setInventorySlotContents(int index, @Nullable ItemStack stack) {
         this.stacks.set(index, stack);
 
-        if (stack != null && stack.getCount() > this.getInventoryStackLimit()) {
+        if (stack != ItemStack.EMPTY && stack.getCount() > this.getInventoryStackLimit()) {
             stack.setCount(this.getInventoryStackLimit());
         }
     }
@@ -427,4 +429,15 @@ public class TileEntityWorktable extends TileEntity implements IInventory, ISide
         return this.customName != null && this.customName.length() > 0;
     }
 
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
+    }
 }

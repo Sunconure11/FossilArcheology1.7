@@ -40,7 +40,7 @@ public class FeederContainer extends SyncedFieldContainer{
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int getSlot) {
-        ItemStack itemstack = null;
+        ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = (Slot) this.inventorySlots.get(getSlot);
         if (slot != null && slot.getHasStack()) {
             ItemStack itemstack1 = slot.getStack();
@@ -55,14 +55,14 @@ public class FeederContainer extends SyncedFieldContainer{
                     // try to place in either Input slot; add 1 to final input
                     // slot because mergeItemStack uses < index
                     if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
-                        return null;
+                        return ItemStack.EMPTY;
                     }
                 }
                 if (FoodMappings.INSTANCE.getItemFoodAmount(itemstack1, Diet.HERBIVORE) != 0) {
                     // try to place in either Input slot; add 1 to final input
                     // slot because mergeItemStack uses < index
                     if (!this.mergeItemStack(itemstack1, 1, 2, false)) {
-                        return null;
+                        return ItemStack.EMPTY;
                     }
                 }
             }
@@ -70,22 +70,22 @@ public class FeederContainer extends SyncedFieldContainer{
             else if (getSlot >= HERB_INPUT + 1 && getSlot < HERB_INPUT + 28) {
                 // place in action bar
                 if (!this.mergeItemStack(itemstack1, HERB_INPUT + 28, HERB_INPUT + 37, false)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             }
             // item in action bar - place in player inventory
             else if (getSlot >= HERB_INPUT + 28 && getSlot < HERB_INPUT + 37 && !this.mergeItemStack(itemstack1, HERB_INPUT + 1, HERB_INPUT + 28, false)) {
-                return null;
+                return ItemStack.EMPTY;
             }
 
             if (itemstack1.getCount() == 0) {
-                slot.putStack(null);
+                slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }
 
             if (itemstack1.getCount() == itemstack.getCount()) {
-                return null;
+                return ItemStack.EMPTY;
             }
 
             slot.onTake(player, itemstack1);

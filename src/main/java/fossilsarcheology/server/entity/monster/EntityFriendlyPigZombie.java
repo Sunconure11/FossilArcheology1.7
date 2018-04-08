@@ -32,6 +32,7 @@ public class EntityFriendlyPigZombie extends EntityTameable {
         super(var1);
         this.setSize(0.5F, 1.9F);
         this.isImmuneToFire = true;
+        this.aiSit = new EntityAISit(this);
         this.tasks.addTask(1, new EntityAISwimming(this));
         this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new EntityAIAttackMelee(this, 1.0D, true));
@@ -82,7 +83,7 @@ public class EntityFriendlyPigZombie extends EntityTameable {
         if (flag) {
             int i = this.world.getDifficulty().getDifficultyId();
 
-            if (this.getHeldItemMainhand() == null && this.isBurning() && this.rand.nextFloat() < (float) i * 0.3F) {
+            if (this.getHeldItemMainhand() == ItemStack.EMPTY && this.isBurning() && this.rand.nextFloat() < (float) i * 0.3F) {
                 entity.setFire(2 * i);
             }
         }
@@ -135,6 +136,7 @@ public class EntityFriendlyPigZombie extends EntityTameable {
 
     }
 
+
     @Override
     public boolean isAIDisabled() {
         return false;
@@ -169,6 +171,7 @@ public class EntityFriendlyPigZombie extends EntityTameable {
         return false;
     }
 
+    @Override
     protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty) {
         this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
     }

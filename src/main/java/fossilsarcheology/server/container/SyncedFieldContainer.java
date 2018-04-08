@@ -5,6 +5,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -42,7 +43,7 @@ public abstract class SyncedFieldContainer extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slotIndex) {
-        ItemStack transferred = null;
+        ItemStack transferred = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(slotIndex);
         int otherSlots = this.inventorySlots.size() - 36;
         if (slot != null && slot.getHasStack()) {
@@ -50,13 +51,13 @@ public abstract class SyncedFieldContainer extends Container {
             transferred = current.copy();
             if (slotIndex < otherSlots) {
                 if (!this.mergeItemStack(current, otherSlots, this.inventorySlots.size(), true)) {
-                    return null;
+                    return ItemStack.EMPTY;
                 }
             } else if (!this.mergeItemStack(current, 0, otherSlots, false)) {
-                return null;
+                return ItemStack.EMPTY;
             }
             if (current.getCount() == 0) {
-                slot.putStack(null);
+                slot.putStack(ItemStack.EMPTY);
             } else {
                 slot.onSlotChanged();
             }

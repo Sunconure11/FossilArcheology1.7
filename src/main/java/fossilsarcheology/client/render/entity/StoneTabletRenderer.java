@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -89,19 +90,32 @@ public class StoneTabletRenderer extends Render<StoneTabletEntity> {
 
     @Override
     public void doRender(StoneTabletEntity entity, double x, double y, double z, float yaw, float partialTicks) {
-        if (entity.variant != null) {
-            this.bindEntityTexture(entity);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, z);
-            GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
-            GlStateManager.enableRescaleNormal();
-            StoneTabletEntity.Variant variant = entity.variant;
-            float scale = 0.0625F;
-            GlStateManager.scale(scale, scale, scale);
-            this.renderTablet(entity, variant.sizeX, variant.sizeY, variant.offsetX, variant.offsetY);
-            GlStateManager.disableRescaleNormal();
-            GlStateManager.popMatrix();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(x, y, z);
+        GlStateManager.rotate(180.0F - yaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.enableRescaleNormal();
+        this.bindEntityTexture(entity);
+        StoneTabletEntity.Variant entitypainting$enumart = entity.variant;
+        float f = 0.0625F;
+        GlStateManager.scale(0.0625F, 0.0625F, 0.0625F);
+
+        if (this.renderOutlines)
+        {
+            GlStateManager.enableColorMaterial();
+            GlStateManager.enableOutlineMode(this.getTeamColor(entity));
         }
+
+        this.renderTablet(entity, entitypainting$enumart.sizeX, entitypainting$enumart.sizeY, entitypainting$enumart.offsetX, entitypainting$enumart.offsetY);
+
+        if (this.renderOutlines)
+        {
+            GlStateManager.disableOutlineMode();
+            GlStateManager.disableColorMaterial();
+        }
+
+        GlStateManager.disableRescaleNormal();
+        GlStateManager.popMatrix();
+        super.doRender(entity, x, y, z, yaw, partialTicks);
     }
 
     @Override

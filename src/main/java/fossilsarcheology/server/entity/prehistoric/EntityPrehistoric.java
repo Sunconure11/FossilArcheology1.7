@@ -24,6 +24,7 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISit;
@@ -116,7 +117,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     private static final DataParameter<Integer> GENDER = EntityDataManager.<Integer>createKey(EntityPrehistoric.class, DataSerializers.VARINT);
     private static final DataParameter<Boolean> SLEEPING = EntityDataManager.<Boolean>createKey(EntityPrehistoric.class, DataSerializers.BOOLEAN);
     private static final DataParameter<Integer> MOOD = EntityDataManager.<Integer>createKey(EntityPrehistoric.class, DataSerializers.VARINT);
-    private static final DataParameter<Boolean> SITTING = EntityDataManager.<Boolean>createKey(EntityPrehistoric.class, DataSerializers.BOOLEAN);
     private static final DataParameter<String> OWNERDISPLAYNAME = EntityDataManager.<String>createKey(EntityPrehistoric.class, DataSerializers.STRING);
     private static final DataParameter<Byte> CLIMBING = EntityDataManager.<Byte>createKey(EntityPrehistoric.class, DataSerializers.BYTE);
 
@@ -171,7 +171,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
         this.dataManager.register(SLEEPING, false);
         this.dataManager.register(CLIMBING, (byte)0);
         this.dataManager.register(MOOD, 0);
-        this.dataManager.register(SITTING, false);
         this.dataManager.register(OWNERDISPLAYNAME, "");
     }
 
@@ -284,23 +283,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     @Override
     public boolean isMovementBlocked() {
         return this.getHealth() <= 0.0F || isSitting() || isSleeping() || this.isSkeleton() || this.isActuallyWeak();
-    }
-
-    @Override
-    public boolean isSitting() {
-        if (world.isRemote) {
-            boolean isSitting = this.dataManager.get(SITTING);
-
-            if ((isSitting != this.isSitting)) {
-                ticksSitted = 0;
-            }
-
-            this.isSitting = isSitting;
-
-            return isSitting;
-        }
-
-        return isSitting;
     }
 
     public boolean isSleeping() {
@@ -635,6 +617,44 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
         }
     }
 
+
+    @Override
+    public void travel(float strafe, float vertical, float forward) {
+        float f4;
+        if(this.isSitting()){
+            super.travel(0, 0, 0);
+            return;
+        }
+        if (this.isBeingRidden()) {
+            EntityLivingBase controller = (EntityLivingBase) this.getControllingPassenger();
+            if (controller != null) {
+                strafe = controller.moveStrafing * 0.5F;
+                forward = controller.moveForward;
+                if (forward <= 0.0F) {
+                    forward *= 0.25F;
+                }
+                this.fallDistance = 0;
+                super.travel(strafe, vertical = 0, forward);
+                this.setAIMoveSpeed(onGround ? (float) this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue() : 2);
+            return;
+            }
+        }
+        super.travel(strafe, vertical, forward);
+    }
+    @Nullable
+    public Entity getControllingPassenger() {
+        for (Entity passenger : this.getPassengers()) {
+            if (passenger instanceof EntityPlayer && this.getAttackTarget() != passenger) {
+                EntityPlayer player = (EntityPlayer) passenger;
+                if (this.isTamed() && this.isOwner(player)) {
+                    return player;
+                }
+            }
+        }
+        return null;
+    }
+
+
     public void setRidingPlayer(EntityPlayer player) {
         player.rotationYaw = this.rotationYaw;
         player.rotationPitch = this.rotationPitch;
@@ -644,6 +664,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     @Override
     public void onUpdate() {
         super.onUpdate();
+        this.setScaleForAge(false);
         this.setAgeinTicks(this.getAgeInTicks() + 1);
         if (this.getAgeInTicks() % 24000 == 0) {
             this.updateAbilities();
@@ -800,9 +821,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
     @Override
     public void setScaleForAge(boolean child) {
-        if (ticksExisted % 20 == 0) {
-            this.setScale(this.getAgeScale());
-        }
+        this.setScale(this.getAgeScale());
     }
 
     public Entity createEgg(EntityAgeable entity) {
@@ -980,9 +999,18 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     }
 
     @Override
+    public boolean isSitting() {
+        if (world.isRemote) {
+            boolean isSitting = (this.dataManager.get(TAMED) & 1) != 0;
+            this.isSitting = isSitting;
+            return isSitting;
+        }
+        return isSitting;
+    }
+
+    @Override
     public void setSitting(boolean sitting) {
         super.setSitting(sitting);
-
         if (!world.isRemote) {
             this.isSitting = sitting;
         }
@@ -1076,14 +1104,14 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
     @Override
     public boolean processInteract(EntityPlayer player, EnumHand hand) {
-        ItemStack itemstack = player.inventory.getCurrentItem();
-
+        ItemStack itemstack = player.getHeldItem(hand);
         if (this.isSkeleton()) {
             if (itemstack == ItemStack.EMPTY) {
                 if (player.isSneaking()) {
                     this.nudgeEntity(player);
                 } else {
-                    this.faceEntity(player, 360.0F, 360.0F);
+                    this.rotationYawHead = -player.rotationYaw;
+                    this.renderYawOffset = -player.rotationYaw;
                 }
             } else {
                 if (itemstack.getItem() == Items.BONE && this.getAgeInDays() < this.getAdultAge()) {
@@ -1098,7 +1126,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
 
         } else {
 
-            if (itemstack != null) {
+            if (itemstack != ItemStack.EMPTY) {
                 if (itemstack.getItem() != null) {
                     if ((this.aiTameType() == PrehistoricEntityTypeAI.Taming.GEM && itemstack.getItem() == FAItemRegistry.SCARAB_GEM) || (this.aiTameType() == PrehistoricEntityTypeAI.Taming.BLUEGEM && itemstack.getItem() == FAItemRegistry.AQUATIC_SCARAB_GEM)) {
                         if (!this.isTamed() && !this.func_152114_e(player) && this.isActuallyWeak()) {
@@ -1117,7 +1145,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                 }
             }
 
-            if (itemstack != null) {
+            if (itemstack != ItemStack.EMPTY) {
                 if (itemstack.getItem() == FAItemRegistry.CHICKEN_ESSENCE && !player.world.isRemote) {
                     if (this.getAgeInDays() < this.getAdultAge() && this.getHunger() > 0) {
                         if (this.getHunger() > 0) {
@@ -1128,7 +1156,6 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                             Revival.NETWORK_WRAPPER.sendToAll(new MessageFoodParticles(getEntityId(), Item.getIdFromItem(FAItemRegistry.CHICKEN_ESSENCE)));
                             this.setAgeInDays(this.getAgeInDays() + 1);
                             this.setHunger(1 + (new Random()).nextInt(this.getHunger()));
-                            this.func_152115_b(player.getDisplayName().toString());
                             return true;
                         }
                     }
@@ -1222,12 +1249,13 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
                         // this.currentOrder = OrderType.FreeMove;
                         // setRidingPlayer(player);
                     }
-                    if (this.getOrderItem() != null && itemstack.getItem() == this.getOrderItem() && this.isTamed() && this.getOwnerDisplayName().equals(player.getDisplayName().toString()) && !player.isRiding()) {
+                    if (this.getOrderItem() != null && itemstack.getItem() == this.getOrderItem() && this.isTamed() && this.getOwnerDisplayName().equals(player.getName().toString()) && !player.isRiding()) {
                         if (!this.world.isRemote) {
                             this.isJumping = false;
                             this.getNavigator().clearPath();
                             this.currentOrder = OrderType.values()[(this.currentOrder.ordinal() + 1) % 3];
                             this.sendOrderMessage(this.currentOrder);
+
                         }
                         return true;
                     }
@@ -1307,6 +1335,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
     public boolean func_152114_e(EntityLivingBase entity) {
         if (entity != null) {
             String s = entity.getDisplayName().toString();
+            System.out.println(this.getOwnerDisplayName());
             return s != null && this.getOwnerDisplayName() != null && this.getOwnerDisplayName().equals(s);
         }
         return false;
@@ -1666,8 +1695,12 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
         return 0;
     }
 
-    @Override
-    public void updateRidden() {
+    public void updatePassenger(Entity passenger) {
+        super.updatePassenger(passenger);
+        if (this.isPassenger(passenger)) {
+            renderYawOffset = rotationYaw;
+            this.rotationYaw = passenger.rotationYaw;
+        }
         if (this.getControllingPassenger() != null) {
             if (this.getControllingPassenger() instanceof EntityPlayer) {
                 this.setPosition(posX, posY - ((EntityPlayer) this.getControllingPassenger()).getYOffset(), posZ);
@@ -1682,15 +1715,14 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             double extraZ = (double) (radius * MathHelper.cos(angle));
             double extraY = ridingY * (getAgeScale());
             float spinosaurusAddition = 0;
-            //TODO
-           /* if (this instanceof EntitySpinosaurus) {
+            if (this instanceof EntitySpinosaurus) {
                 spinosaurusAddition = -(((EntitySpinosaurus) this).swimProgress * 0.1F);
-            }*/
+            }
             this.getRidingPlayer().setPosition(this.posX + extraX, this.posY + extraY + spinosaurusAddition, this.posZ + extraZ);
             return;
         }
-        super.updateRidden();
     }
+
 
     @Override
     public EntityAgeable createChild(EntityAgeable entity) {

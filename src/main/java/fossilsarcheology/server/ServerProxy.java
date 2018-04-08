@@ -2,14 +2,12 @@ package fossilsarcheology.server;
 
 import fossilsarcheology.Revival;
 import fossilsarcheology.client.sound.FASoundRegistry;
-import fossilsarcheology.server.achievement.FossilAchievements;
-import fossilsarcheology.server.api.BlockEntity;
 import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.block.FAFluidRegistry;
 import fossilsarcheology.server.block.IBlockItem;
 import fossilsarcheology.server.block.ISlabItem;
 import fossilsarcheology.server.block.entity.*;
-import fossilsarcheology.server.block.entity.block.TileEntityVolute;
+import fossilsarcheology.server.block.entity.TileEntityVolute;
 import fossilsarcheology.server.container.*;
 import fossilsarcheology.server.entity.EntityFishBase;
 import fossilsarcheology.server.entity.FAEntityRegistry;
@@ -21,7 +19,6 @@ import fossilsarcheology.server.event.FossilLivingEvent;
 import fossilsarcheology.server.event.FossilPickupItemEvent;
 import fossilsarcheology.server.item.FAItemRegistry;
 import fossilsarcheology.server.recipe.FAOreDictRegistry;
-import fossilsarcheology.server.recipe.FARecipeRegistry;
 import fossilsarcheology.server.util.FossilFoodMappings;
 import fossilsarcheology.server.world.FAWorldGenerator;
 import fossilsarcheology.server.world.FAWorldRegistry;
@@ -126,20 +123,9 @@ public class ServerProxy implements IGuiHandler {
 
     private static void registerItemBlocks(Block block, RegistryEvent.Register<Item> event){
         if(block instanceof IBlockItem){
-            ItemBlock itemBlock = new ItemBlock(block);
-            if (IBlockItem.class.isAssignableFrom(((IBlockItem)block).getItemBlockClass())) {
-                try {
-                    String name = itemBlock.getUnlocalizedName().substring("item.".length());
-                    itemBlock.setRegistryName(new ResourceLocation(Revival.MODID, name));
-                    event.getRegistry().register(itemBlock);
-                    itemBlock = ((IBlockItem)block).getItemBlockClass().getDeclaredConstructor(World.class).newInstance(block);
-                } catch (ReflectiveOperationException e) {
-                    e.printStackTrace();
-                }
-            }
+            ItemBlock itemBlock = ((IBlockItem)block).getItemBlock(block);
             String name = itemBlock.getUnlocalizedName().substring("item.".length());
             itemBlock.setRegistryName(new ResourceLocation(Revival.MODID, name));
-            event.getRegistry().register(itemBlock);
             event.getRegistry().register(itemBlock);
         }else if(block instanceof ISlabItem){
             ItemBlock itemBlock = ((ISlabItem)block).getItemBlock();
@@ -180,7 +166,6 @@ public class ServerProxy implements IGuiHandler {
         FAFluidRegistry.register();
         FAEntityRegistry.register();
         FAOreDictRegistry.register();
-        FossilFoodMappings.register();
         FAWorldRegistry.register();
 
 
@@ -192,6 +177,7 @@ public class ServerProxy implements IGuiHandler {
         MinecraftForge.EVENT_BUS.register(new FossilBonemealEvent());
         MinecraftForge.EVENT_BUS.register(new FossilLivingEvent());
         MinecraftForge.TERRAIN_GEN_BUS.register(new FAWorldGenerator());
+        FossilFoodMappings.register();
     }
 
     public void calculateChainBuffer(EntityFishBase entity) {

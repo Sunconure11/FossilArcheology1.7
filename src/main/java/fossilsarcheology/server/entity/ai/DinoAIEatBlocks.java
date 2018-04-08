@@ -86,7 +86,7 @@ public class DinoAIEatBlocks extends EntityAIBase {
             Block block = prehistoric.world.getBlockState(this.targetBlock).getBlock();
             if (FoodMappings.INSTANCE.getBlockFoodAmount(block, prehistoric.type.diet) > 0) {
                 double d0 = this.getDistance(this.targetBlock.getX() + 0.5D, this.targetBlock.getY(), this.targetBlock.getZ() + 0.5D);
-                if (d0 * d0 < 6) {
+                    if (d0 * d0 < 6) {
                     prehistoric.setHunger(Math.min(prehistoric.getMaxHunger(), prehistoric.getHunger() + FoodMappings.INSTANCE.getBlockFoodAmount(block, prehistoric.type.diet)));
                     prehistoric.setHealth(Math.min(prehistoric.getMaxHealth(), (int) (prehistoric.getHealth() + FoodMappings.INSTANCE.getBlockFoodAmount(block, prehistoric.type.diet) / 10)));
                     // prehistoric.doFoodEffect(Item.getItemFromBlock(block));

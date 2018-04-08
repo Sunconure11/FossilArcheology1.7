@@ -49,6 +49,10 @@ public class AnuStatueBlock extends BlockContainer implements DefaultRenderedIte
         return new AxisAlignedBB(0F, 0.0F, 0F, 1F, 1.9F, 1);
     }
 
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     @Override
     public boolean canProvidePower(IBlockState state) {
         return true;

@@ -34,4 +34,11 @@ public class AnalyzerGUI extends GuiContainer {
         int progress = this.analyzer.getAnalyzeProgressScaled(22);
         this.drawTexturedModalRect(drawX + 80, drawY + 22, 177, 18, progress, 9);
     }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }

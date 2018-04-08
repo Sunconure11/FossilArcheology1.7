@@ -5,7 +5,7 @@ import fossilsarcheology.client.model.ModelVaseKylix;
 import fossilsarcheology.client.model.ModelVaseVolute;
 import fossilsarcheology.server.block.entity.TileEntityAmphora;
 import fossilsarcheology.server.block.entity.TileEntityKylix;
-import fossilsarcheology.server.block.entity.block.TileEntityVolute;
+import fossilsarcheology.server.block.entity.TileEntityVolute;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;

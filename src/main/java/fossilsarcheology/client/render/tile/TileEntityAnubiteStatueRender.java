@@ -8,7 +8,7 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 public class TileEntityAnubiteStatueRender extends TileEntitySpecialRenderer<TileEntityAnubiteStatue> {
-    public static final ResourceLocation texture = new ResourceLocation("fossil:textures/model/Anubite_ancient_statue.png");
+    public static final ResourceLocation texture = new ResourceLocation("fossil:textures/model/anubite_ancient_statue.png");
     private static final ModelAnubite modelBlock = new ModelAnubite();
 
     public TileEntityAnubiteStatueRender() {

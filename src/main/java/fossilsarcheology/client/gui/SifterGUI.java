@@ -44,4 +44,11 @@ public class SifterGUI extends GuiContainer {
         this.drawTexturedModalRect(centerX + 75, centerY + 33, 181, 2, 31, siftTimeRemaining + 1);
 
     }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }

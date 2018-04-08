@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -41,6 +42,10 @@ public class KylixVaseBlock extends BlockContainer implements BlockEntity, IBloc
 
     public int damageDropped(IBlockState state) {
         return ((KylixVaseBlock.EnumType)state.getValue(VARIANT)).getMetadata();
+    }
+
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
@@ -84,15 +89,14 @@ public class KylixVaseBlock extends BlockContainer implements BlockEntity, IBloc
     }
 
     @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return KylixBlockItem.class;
-    }
-
-    @Override
     public Class<? extends TileEntity> getEntity() {
         return TileEntityKylix.class;
     }
 
+    @Override
+    public ItemBlock getItemBlock(Block block) {
+        return new KylixBlockItem(block);
+    }
 
     class KylixBlockItem extends ItemBlock {
         public KylixBlockItem(Block block) {
@@ -103,6 +107,15 @@ public class KylixVaseBlock extends BlockContainer implements BlockEntity, IBloc
         public String getUnlocalizedName(ItemStack itemstack) {
             return getUnlocalizedName() + "." + EnumType.byMetadata(itemstack.getItemDamage()).getName();
         }
+
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+            if (tab == FATabRegistry.BLOCKS) {
+                for(int i = 0; i < 4; i++){
+                    items.add(new ItemStack(this, 1, i));
+                }
+            }
+        }
+
     }
 
     @Override

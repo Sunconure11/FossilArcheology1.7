@@ -2,6 +2,7 @@ package fossilsarcheology.server.block.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityFigurine extends TileEntity {
@@ -12,22 +13,33 @@ public class TileEntityFigurine extends TileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound par1NBTTagCompound) {
         super.writeToNBT(par1NBTTagCompound);
-        par1NBTTagCompound.setByte("FigurineType", (byte) (this.figurineType & 255));
-        par1NBTTagCompound.setByte("Rot", (byte) (this.figurineRotation & 255));
+        par1NBTTagCompound.setInteger("FigurineType", figurineType);
+        par1NBTTagCompound.setInteger("Rot", figurineRotation);
         return par1NBTTagCompound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound par1NBTTagCompound) {
         super.readFromNBT(par1NBTTagCompound);
-        this.figurineType = par1NBTTagCompound.getByte("FigurineType");
-        this.figurineRotation = par1NBTTagCompound.getByte("Rot");
+        this.figurineType = par1NBTTagCompound.getInteger("FigurineType");
+        this.figurineRotation = par1NBTTagCompound.getInteger("Rot");
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        return new SPacketUpdateTileEntity(pos, 0, this.writeToNBT(tag));
     }
 
     @Override
     public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
         readFromNBT(packet.getNbtCompound());
     }
+
+    public NBTTagCompound getUpdateTag() {
+        return this.writeToNBT(new NBTTagCompound());
+    }
+
 
     public int getFigurineType() {
         return this.figurineType;

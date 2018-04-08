@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -67,9 +68,13 @@ public class AmphoraVaseBlock extends BlockContainer implements BlockEntity, IBl
         return new BlockStateContainer(this, new IProperty[] {VARIANT});
     }
 
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
     @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return AmphoraBlockItem.class;
+    public ItemBlock getItemBlock(Block block) {
+        return new AmphoraBlockItem(block);
     }
 
     @Override
@@ -86,6 +91,15 @@ public class AmphoraVaseBlock extends BlockContainer implements BlockEntity, IBl
         public String getUnlocalizedName(ItemStack itemstack) {
             return getUnlocalizedName() + "." + EnumType.byMetadata(itemstack.getItemDamage()).getName();
         }
+
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+            if (tab == FATabRegistry.BLOCKS) {
+                for(int i = 0; i < 4; i++){
+                    items.add(new ItemStack(this, 1, i));
+                }
+            }
+        }
+
     }
 
     @SideOnly(Side.CLIENT)

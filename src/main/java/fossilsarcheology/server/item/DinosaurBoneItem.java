@@ -27,7 +27,12 @@ public class DinosaurBoneItem extends Item implements SubtypeRenderedItem {
     public String getItemStackDisplayName(ItemStack stack) {
         if (stack.getItemDamage() >= 0 && stack.getItemDamage() < DinosaurBoneType.values().length) {
             DinosaurBoneType type = DinosaurBoneType.values()[stack.getItemDamage()];
-            return I18n.translateToLocalFormatted(this.getUnlocalizedNameInefficiently(stack) + ".name", I18n.translateToLocal("entity.fossil." + type.getResourceName() + ".name"));
+            if(this == FAItemRegistry.UNIQUE_ITEM){
+                return I18n.translateToLocal(I18n.translateToLocal("item.bone_unique_item." + type.getResourceName() + ".name"));
+
+            }else{
+                return I18n.translateToLocalFormatted(this.getUnlocalizedNameInefficiently(stack) + ".name", I18n.translateToLocal("entity.fossil." + type.getResourceName() + ".name"));
+            }
         }
         return super.getItemStackDisplayName(stack);
     }

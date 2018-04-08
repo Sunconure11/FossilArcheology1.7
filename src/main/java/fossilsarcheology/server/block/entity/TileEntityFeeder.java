@@ -13,6 +13,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -21,9 +23,6 @@ import net.minecraft.util.text.translation.I18n;
 
 import javax.annotation.Nullable;
 
-/**
- * Created by alexr_000 on 3/4/2017.
- */
 public class TileEntityFeeder extends TileEntity implements IInventory, ISidedInventory, ITickable {
     private static final int[] slots_all = new int[]{0, 1};
     public int currentMeat = 0;
@@ -191,13 +190,11 @@ public class TileEntityFeeder extends TileEntity implements IInventory, ISidedIn
     
     @Override
     public boolean isItemValidForSlot(int index, ItemStack stack) {
-        if (stack != null && stack.getItem() != null) {
             if(FoodMappings.INSTANCE.getItemFoodAmount(stack, Diet.HERBIVORE) != 0 && index == 1) {
                 return true;
             }else if(FoodMappings.INSTANCE.getItemFoodAmount(stack, Diet.CARNIVORE_EGG) != 0 && index == 0){
                 return true;
             }
-        }
         return false;
     }
 
@@ -303,4 +300,17 @@ public class TileEntityFeeder extends TileEntity implements IInventory, ISidedIn
             }
         }
     }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
+    }
+
 }

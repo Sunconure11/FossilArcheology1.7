@@ -6,6 +6,7 @@ import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.entity.prehistoric.PrehistoricEntityType;
 import fossilsarcheology.server.item.BirdEggItem;
 import fossilsarcheology.server.item.FAItemRegistry;
+import fossilsarcheology.server.item.PrehistoricEntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -16,6 +17,8 @@ import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -36,7 +39,7 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
     private String customName;
 
     private static int getItemBurnTime(ItemStack itemstack) {
-        if (itemstack != null) {
+        if (itemstack != ItemStack.EMPTY) {
             Item output = itemstack.getItem();
 
             if (output == FAItemRegistry.BIOFOSSIL) {
@@ -109,7 +112,7 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
 
     @Override
     public ItemStack decrStackSize(int slot, int amount) {
-        if (this.stacks.get(slot) != null) {
+        if (this.stacks.get(slot) != ItemStack.EMPTY) {
             ItemStack var3;
 
             if (this.stacks.get(slot).getCount() <= amount) {
@@ -126,7 +129,7 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
                 return var3;
             }
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -139,7 +142,7 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         this.stacks.set(slot, stack);
-        if (stack != null && stack.getCount() > this.getInventoryStackLimit()) {
+        if (stack != ItemStack.EMPTY && stack.getCount() > this.getInventoryStackLimit()) {
             stack.setCount(this.getInventoryStackLimit());
         }
     }
@@ -195,14 +198,6 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
     public void update() {
         boolean var1 = this.furnaceCookTime > 0;
         boolean var2 = false;
-        int cookValue;
-
-        if (Revival.RELEASE_TYPE.enableDebugging()) {
-            cookValue = 300;
-        } else {
-
-            cookValue = 6000;
-        }
         isActive = this.furnaceCookTime > 0;
 
         if (this.furnaceBurnTime > 0) {
@@ -216,8 +211,8 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
                 if (this.furnaceBurnTime > 0) {
                     var2 = true;
 
-                    if (this.stacks.get(1) != null) {
-                        if (this.stacks.get(1).getItem().hasContainerItem(null)) {
+                    if (this.stacks.get(1) != ItemStack.EMPTY) {
+                        if (this.stacks.get(1).getItem().hasContainerItem(ItemStack.EMPTY)) {
                             this.stacks.set(1, new ItemStack(this.stacks.get(1).getItem().getContainerItem()));
                         } else {
                             this.stacks.get(1).shrink(1);
@@ -232,7 +227,7 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
             if (this.isBurning() && this.canSmelt()) {
                 ++this.furnaceCookTime;
 
-                if (this.furnaceCookTime == cookValue) {
+                if (this.furnaceCookTime == 6000) {
                     this.furnaceCookTime = 0;
                     this.smeltItem();
                     var2 = true;
@@ -257,11 +252,11 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
     }
 
     private boolean canSmelt() {
-        if (this.stacks.get(0) == null) {
+        if (this.stacks.get(0) == ItemStack.EMPTY) {
             return false;
         } else {
             ItemStack var1 = this.checkSmelt(this.stacks.get(0));
-            return var1 != null && (this.stacks.get(2) == null || (this.stacks.get(2).isItemEqual(var1) && (this.stacks.get(2).getCount() < this.getInventoryStackLimit() && this.stacks.get(2).getCount() < this.stacks.get(2).getMaxStackSize() || this.stacks.get(2).getCount() < var1.getMaxStackSize())));
+            return var1 != ItemStack.EMPTY && (this.stacks.get(2) == ItemStack.EMPTY || (this.stacks.get(2).isItemEqual(var1) && (this.stacks.get(2).getCount() < this.getInventoryStackLimit() && this.stacks.get(2).getCount() < this.stacks.get(2).getMaxStackSize() || this.stacks.get(2).getCount() < var1.getMaxStackSize())));
         }
     }
 
@@ -270,14 +265,14 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
             ItemStack var1 = this.checkSmelt(this.stacks.get(0));
 
             if (this.stacks.get(2) == ItemStack.EMPTY) {
-                if (var1 != null) {
+                if (var1 != ItemStack.EMPTY) {
                     this.stacks.set(2, var1.copy());
                 }
             } else if (this.stacks.get(2) == var1) {
                 this.stacks.get(2).grow(var1.getCount());
             }
 
-            if (this.stacks.get(0).getItem().hasContainerItem(null)) {
+            if (this.stacks.get(0).getItem().hasContainerItem(ItemStack.EMPTY)) {
                 this.stacks.set(0, new ItemStack(this.stacks.get(0).getItem().getContainerItem()));
             } else {
                 this.stacks.get(0).shrink(1);
@@ -330,15 +325,13 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
     }
 
     public int getDNAType() {
-        if (this.getStackInSlot(0) != null) {
-            if (this.getStackInSlot(0).getItem() != null) {
+        if (this.getStackInSlot(0) != ItemStack.EMPTY) {
                 if (this.getStackInSlot(0).getItem() == PrehistoricEntityType.COELACANTH.dnaItem || this.getStackInSlot(0).getItem() == PrehistoricEntityType.STURGEON.dnaItem || this.getStackInSlot(0).getItem() == PrehistoricEntityType.ALLIGATOR_GAR.dnaItem) {
                     return 1;
                 }
                 if (this.getStackInSlot(0).getItem() == FAItemRegistry.FOSSIL_SEED_FERN || this.getStackInSlot(0).getItem() == FAItemRegistry.PALAE_SAPLING_FOSSIL || this.getStackInSlot(0).getItem() == FAItemRegistry.FOSSIL_SEED) {
                     return 2;
                 }
-            }
         }
         return 0;
     }
@@ -417,8 +410,23 @@ public class TileEntityCultivate extends TileEntity implements IInventory, ISide
             return new ItemStack(PrehistoricEntityType.getBestBirdEgg(itemstack.getItem()), 1);
         }
 
-        return null;
+        return ItemStack.EMPTY;
     }
 
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
+    }
+
+    public NBTTagCompound getUpdateTag() {
+        return this.writeToNBT(new NBTTagCompound());
+    }
 
 }

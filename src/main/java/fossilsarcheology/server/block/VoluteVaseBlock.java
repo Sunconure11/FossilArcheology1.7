@@ -1,7 +1,7 @@
 package fossilsarcheology.server.block;
 
 import fossilsarcheology.server.api.BlockEntity;
-import fossilsarcheology.server.block.entity.block.TileEntityVolute;
+import fossilsarcheology.server.block.entity.TileEntityVolute;
 import fossilsarcheology.server.tab.FATabRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
@@ -19,6 +19,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -41,6 +42,11 @@ public class VoluteVaseBlock extends BlockContainer implements BlockEntity, IBlo
     public int damageDropped(IBlockState state) {
         return ((VoluteVaseBlock.EnumType)state.getValue(VARIANT)).getMetadata();
     }
+
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
 
     @SideOnly(Side.CLIENT)
     public BlockRenderLayer getBlockLayer() {
@@ -81,15 +87,23 @@ public class VoluteVaseBlock extends BlockContainer implements BlockEntity, IBlo
         return new BlockStateContainer(this, new IProperty[] {VARIANT});
     }
 
-    @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return VoluteBlockItem.class;
-    }
 
+    @Override
+    public ItemBlock getItemBlock(Block block) {
+        return new VoluteBlockItem(block);
+    }
 
     class VoluteBlockItem extends ItemBlock {
         public VoluteBlockItem(Block block) {
             super(block);
+        }
+
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+            if (tab == FATabRegistry.BLOCKS) {
+                for(int i = 0; i < 4; i++){
+                    items.add(new ItemStack(this, 1, i));
+                }
+            }
         }
 
         @Override

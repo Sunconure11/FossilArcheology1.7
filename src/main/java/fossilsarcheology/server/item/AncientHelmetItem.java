@@ -12,7 +12,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class AncientHelmetItem extends ItemArmor implements DefaultRenderedItem {
     public AncientHelmetItem() {
-        super(ArmorMaterial.IRON, 0, EntityEquipmentSlot.HEAD);
+        super(FAItemRegistry.ANCIENT_HELMET_MATERIAL, 0, EntityEquipmentSlot.HEAD);
         this.setCreativeTab(FATabRegistry.ITEMS);
         this.setUnlocalizedName("ancientHelmet");
     }

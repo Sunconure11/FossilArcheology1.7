@@ -9,6 +9,9 @@ import net.minecraft.entity.effect.EntityLightningBolt;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 
@@ -31,6 +34,7 @@ public class AncientSwordItem extends ItemSword implements DefaultRenderedItem {
                 if (targetentity != null && (targetentity instanceof EntityPig || targetentity instanceof EntityPigZombie)) {
                     EntityFriendlyPigZombie fpz = new EntityFriendlyPigZombie(targetentity.world);
                     fpz.setLocationAndAngles(targetentity.posX, targetentity.posY, targetentity.posZ, targetentity.rotationYaw, targetentity.rotationPitch);
+                    fpz.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
                     if (!targetentity.world.isRemote) {
                         targetentity.world.spawnEntity(fpz);
                     }
@@ -40,7 +44,6 @@ public class AncientSwordItem extends ItemSword implements DefaultRenderedItem {
                         fpz.setOwnerId(playerUUID.getUniqueID());
                         fpz.sendMessageToOwner("pigman.summon");
                     }
-                    targetentity.world.spawnEntity(fpz);
                     targetentity.setDead();
                     targetentity.world.spawnEntity(new EntityLightningBolt(targetentity.world, targetentity.posX, targetentity.posY, targetentity.posZ, true));
 
@@ -59,7 +62,7 @@ public class AncientSwordItem extends ItemSword implements DefaultRenderedItem {
 
     private boolean checkHelmet(EntityPlayer player) {
         ItemStack item = player.inventory.armorInventory.get(3);
-        if (item != null && item.getItem() != null) {
+        if (item != ItemStack.EMPTY) {
             if (item.getItem() == FAItemRegistry.ANCIENT_HELMET) {
                 return true;
             }

@@ -2,6 +2,7 @@ package fossilsarcheology.server.block.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 public class TileEntityAmphora extends TileEntity {
@@ -22,6 +23,17 @@ public class TileEntityAmphora extends TileEntity {
         super.readFromNBT(par1NBTTagCompound);
         this.vaseType = par1NBTTagCompound.getInteger("VaseType");
         this.vaseRotation = par1NBTTagCompound.getInteger("Rot");
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 0, tag);
+    }
+
+    public NBTTagCompound getUpdateTag() {
+        return this.writeToNBT(new NBTTagCompound());
     }
 
     @Override

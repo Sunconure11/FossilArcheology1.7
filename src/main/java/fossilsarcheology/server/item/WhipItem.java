@@ -51,7 +51,7 @@ public class WhipItem extends ItemCarrotOnAStick implements DefaultRenderedItem 
 			 * EntityWhipAttachment(W, P)); }
 			 */
             player.swingArm(hand);
-            player.getRidingEntity().playSound(FASoundRegistry.WHIP, 1.0F, 1.0F);
+            player.playSound(FASoundRegistry.WHIP, 1.0F, 1.0F);
         }
 
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));

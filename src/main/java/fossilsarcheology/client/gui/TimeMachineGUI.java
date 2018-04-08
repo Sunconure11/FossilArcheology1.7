@@ -54,4 +54,11 @@ public class TimeMachineGUI extends GuiContainer {
         int scaledChargeLevel = (int) ((invertedChargeLevel / 1000.0F) * 75.0F);
         this.drawTexturedModalRect(centerX + 5, centerY + 17, 176, 2, 75, scaledChargeLevel);
     }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }

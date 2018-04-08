@@ -4,12 +4,9 @@ import fossilsarcheology.Revival;
 import fossilsarcheology.client.model.*;
 import fossilsarcheology.client.render.entity.*;
 import fossilsarcheology.client.render.tile.*;
-import fossilsarcheology.server.api.DefaultRenderedItem;
-import fossilsarcheology.server.api.IgnoreRenderProperty;
-import fossilsarcheology.server.api.SubtypeRenderedItem;
 import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.block.entity.*;
-import fossilsarcheology.server.block.entity.block.TileEntityVolute;
+import fossilsarcheology.server.block.entity.TileEntityVolute;
 import fossilsarcheology.server.entity.EntityDinosaurEgg;
 import fossilsarcheology.server.entity.StoneTabletEntity;
 import fossilsarcheology.server.entity.monster.*;
@@ -17,18 +14,11 @@ import fossilsarcheology.server.entity.prehistoric.*;
 import fossilsarcheology.server.entity.projectile.AncientJavelinEntity;
 import fossilsarcheology.server.entity.projectile.EntityBirdEgg;
 import fossilsarcheology.server.entity.projectile.JavelinEntity;
-import fossilsarcheology.server.entity.utility.EntityAnuDead;
-import fossilsarcheology.server.entity.utility.EntityAnuEffect;
-import fossilsarcheology.server.entity.utility.EntityToyBall;
-import fossilsarcheology.server.entity.utility.EntityToyScratchingPost;
-import fossilsarcheology.server.item.FAItemRegistry;
-import fossilsarcheology.server.item.FossilSeedsItem;
+import fossilsarcheology.server.entity.utility.*;
 import net.minecraft.block.Block;
-import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.client.renderer.block.statemap.StateMap;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.*;
@@ -56,12 +46,13 @@ public class RenderingHandler {
     public void onInit() {
         RenderingRegistry.registerEntityRenderingHandler(JavelinEntity.class, new JavelinRenderer(MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(AncientJavelinEntity.class, new JavelinRenderer(MINECRAFT.getRenderManager()));
-        RenderingRegistry.registerEntityRenderingHandler(StoneTabletEntity.class, StoneTabletRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(StoneTabletEntity.class, new StoneTabletRenderer(MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityNautilus.class, new RenderFish(new ModelNautilus(), MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityCoelacanth.class, new RenderFish(new ModelCoelacanth(), MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityAlligatorGar.class, new RenderFish(new ModelAlligatorGar(), MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntitySturgeon.class, new RenderFish(new ModelSturgeon(), MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityFailuresaurus.class, new RenderFailuresaurus(new ModelFailuresaurus(), MINECRAFT.getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityFriendlyPigZombie.class, new RenderFriendlyPigZombie(new ModelFriendlyPigZombie(), MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityAnuEffect.class, new RenderAnuEffect(MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityAnuDead.class, new RenderDeadAnu(MINECRAFT.getRenderManager(), new ModelDeadAnu(), 0.3F));
         RenderingRegistry.registerEntityRenderingHandler(EntityAnubite.class, new RenderAnubite(MINECRAFT.getRenderManager()));
@@ -72,6 +63,7 @@ public class RenderingHandler {
         RenderingRegistry.registerEntityRenderingHandler(EntityBirdEgg.class, new RenderBirdEgg(MINECRAFT.getRenderManager(), MINECRAFT.getRenderItem()));
         RenderingRegistry.registerEntityRenderingHandler(EntityToyBall.class, new RenderToyBall(MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityToyScratchingPost.class, new RenderToyScratchingPost(MINECRAFT.getRenderManager()));
+        RenderingRegistry.registerEntityRenderingHandler(EntityToyTetheredLog.class, new RenderToyTetheredLog(MINECRAFT.getRenderManager()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTriceratops.class, new RenderPrehistoric(new ModelTriceratops()));
         RenderingRegistry.registerEntityRenderingHandler(EntityVelociraptor.class, new RenderPrehistoric(new ModelVelociraptor()));
         RenderingRegistry.registerEntityRenderingHandler(EntityTyrannosaurus.class, new RenderPrehistoric(new ModelTyrannosaurus()));
@@ -119,6 +111,8 @@ public class RenderingHandler {
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityVolute.class, new TileEntityVaseRenderer(1));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityKylix.class, new TileEntityVaseRenderer(2));
         ClientRegistry.bindTileEntitySpecialRenderer(TileEntityTimeMachine.class, new TileEntityTimeMachineRender());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileEntityCultivate.class, new TileEntityCultivateRender());
+
         Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(new IBlockColor(){
             public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
                 return worldIn != null && pos != null ? BiomeColorHelper.getFoliageColorAtPos(worldIn, pos) : ColorizerFoliage.getFoliageColorBasic();            }

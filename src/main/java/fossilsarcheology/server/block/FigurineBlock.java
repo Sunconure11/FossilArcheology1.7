@@ -1,6 +1,7 @@
 package fossilsarcheology.server.block;
 
 import fossilsarcheology.server.api.BlockEntity;
+import fossilsarcheology.server.block.entity.AnalyzerBlockEntity;
 import fossilsarcheology.server.block.entity.TileEntityFigurine;
 import fossilsarcheology.server.tab.FATabRegistry;
 import net.minecraft.block.Block;
@@ -19,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.IStringSerializable;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -42,6 +44,10 @@ public class FigurineBlock extends BlockContainer implements IBlockItem, BlockEn
 
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         return AABB;
+    }
+
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     public int damageDropped(IBlockState state) {
@@ -164,13 +170,21 @@ public class FigurineBlock extends BlockContainer implements IBlockItem, BlockEn
     }
 
     @Override
-    public Class<? extends ItemBlock> getItemBlockClass() {
-        return FigurineBlockItem.class;
+    public ItemBlock getItemBlock(Block block) {
+        return new FigurineBlockItem(block);
     }
 
     class FigurineBlockItem extends ItemBlock {
         public FigurineBlockItem(Block block) {
             super(block);
+        }
+
+        public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+            if (tab == FATabRegistry.BLOCKS) {
+                for(int i = 0; i < 16; i++){
+                    items.add(new ItemStack(this, 1, i));
+                }
+            }
         }
 
         @Override

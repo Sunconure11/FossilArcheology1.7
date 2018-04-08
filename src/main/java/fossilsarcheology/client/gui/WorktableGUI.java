@@ -40,4 +40,11 @@ public class WorktableGUI extends GuiContainer {
         progress = this.tile.getCookProgressScaled(24);
         this.drawTexturedModalRect(centerX + 79, centerY + 18, 176, 14, progress + 1, 16);
     }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        this.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
 }

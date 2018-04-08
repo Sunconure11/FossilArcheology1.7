@@ -127,7 +127,7 @@ public class FeederBlock extends BlockContainer implements DefaultRenderedItem {
             enumfacing = EnumFacing.NORTH;
         }
 
-        return this.getDefaultState().withProperty(FACING, enumfacing).withProperty(FOOD, meta % 6);
+        return this.getDefaultState().withProperty(FACING, enumfacing).withProperty(FOOD, 0);
     }
 
     public int getMetaFromState(IBlockState state) {

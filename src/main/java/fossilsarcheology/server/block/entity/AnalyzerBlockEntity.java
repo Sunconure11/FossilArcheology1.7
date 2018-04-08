@@ -3,6 +3,7 @@ package fossilsarcheology.server.block.entity;
 import fossilsarcheology.Revival;
 import fossilsarcheology.server.achievement.FossilAchievements;
 import fossilsarcheology.server.block.AnalyzerBlock;
+import fossilsarcheology.server.block.FABlockRegistry;
 import fossilsarcheology.server.entity.prehistoric.PrehistoricEntityType;
 import fossilsarcheology.server.entity.prehistoric.TimePeriod;
 import fossilsarcheology.server.item.DinosaurBoneItem;
@@ -18,6 +19,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
@@ -28,7 +31,7 @@ import java.util.Random;
 
 public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISidedInventory, ITickable {
     private static final int[] SLOTS_TOP = new int[] {};
-    private static final int[] SLOTS_BOTTOM = new int[] { 10, 11, 12 };
+    private static final int[] SLOTS_BOTTOM = new int[] { 9, 10, 11, 12 };
     private static final int[] SLOTS_SIDES = new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8 };
 
     public int analyzeFuelTime = 0;
@@ -81,7 +84,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
     @Override
     public void setInventorySlotContents(int slot, ItemStack stack) {
         this.stacks.set(slot, stack);
-        if (stack != null && stack.getCount() > this.getInventoryStackLimit()) {
+        if (stack != ItemStack.EMPTY && stack.getCount() > this.getInventoryStackLimit()) {
             stack.setCount(this.getInventoryStackLimit());
         }
     }
@@ -134,7 +137,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
             if (this.getDistanceSq(player.posX, player.posY, player.posZ) < 40) {
                 for (int slot = 12; slot > 8; --slot) {
                     ItemStack stack = this.stacks.get(slot);
-                    if (stack != null) {
+                    if (stack != ItemStack.EMPTY) {
                         if (stack.getItem() == FAItemRegistry.STONE_TABLET) {
                            // player.addStat(FossilAchievements.TABLET, 1);
                         }
@@ -176,7 +179,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
         this.spaceIndex = -1;
         this.rawIndex = -1;
         for (int slot = 0; slot < 9; ++slot) {
-            if (this.stacks.get(slot) != null) {
+            if (this.stacks.get(slot) != ItemStack.EMPTY) {
                 Item item = this.stacks.get(slot).getItem();
                 if (PrehistoricEntityType.isFoodItem(this.stacks.get(slot).getItem()) || (item instanceof DinosaurBoneItem) || (item == FAItemRegistry.BIOFOSSIL) || (item == FAItemRegistry.TAR_FOSSIL) || /*(item == FAItemRegistry.TAR_DROP) || (item == FAItemRegistry.FAILURESAURUS_FLESH) || */ (item == FAItemRegistry.RELIC_SCRAP) || (item == Items.PORKCHOP) || (item == Items.BEEF) || (item == Items.EGG) || (item == Items.CHICKEN) || (item == Item.getItemFromBlock(Blocks.WOOL)) || /*(item == FAItemRegistry.ICED_MEAT) || */ (item == Items.LEATHER) || (item == FAItemRegistry.PLANT_FOSSIL)) {
                     this.rawIndex = slot;
@@ -188,7 +191,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
             return false;
         } else {
             for (int slot = 12; slot > 8; --slot) {
-                if (this.stacks.get(slot) == null) {
+                if (this.stacks.get(slot).isEmpty()) {
                     this.spaceIndex = slot;
                     break;
                 }
@@ -199,7 +202,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
 
     public void analyzeItem() {
         if (this.canAnalyze()) {
-            ItemStack output = null;
+            ItemStack output = ItemStack.EMPTY;
             Random random = this.world.rand;
             int rand = random.nextInt(100);
             Item rawItem = this.stacks.get(rawIndex).getItem();
@@ -231,7 +234,7 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
                 } else {
                     output = new ItemStack(PrehistoricEntityType.getRandomTimePeriod(random, TimePeriod.MESOZOIC).dnaItem, 1);
                 }
-            }/* else if (rawItem == FAItemRegistry.TAR_FOSSIL) {
+            } else if (rawItem == FAItemRegistry.TAR_FOSSIL) {
                 if (rand > -1 && rand <= 50) {
                     output = new ItemStack(Items.DYE, 3, 15);
                 }
@@ -341,11 +344,11 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
                 if (rand > 96) {
                     output = new ItemStack(FAItemRegistry.BROKEN_SWORD, 1);
                 }
-            }*/
-            if (output != null) {
+            }
+            if (output != ItemStack.EMPTY) {
                 for (int slot = 9; slot < 13; slot++) {
                     ItemStack stack = this.stacks.get(slot);
-                    if (stack != null) {
+                    if (stack != ItemStack.EMPTY) {
                         if (stack.isItemEqual(output) && stack.getCount() + output.getCount() < 64) {
                             stack.setCount(stack.getCount() + output.getCount());
                             if (this.stacks.get(this.rawIndex).getCount() > 1) {
@@ -456,5 +459,17 @@ public class AnalyzerBlockEntity extends TileEntity implements IInventory, ISide
     @Override
     public boolean hasCustomName() {
         return this.customName != null && this.customName.length() > 0;
+    }
+
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        this.writeToNBT(tag);
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager netManager, net.minecraft.network.play.server.SPacketUpdateTileEntity packet) {
+        readFromNBT(packet.getNbtCompound());
     }
 }

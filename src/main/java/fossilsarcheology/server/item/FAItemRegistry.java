@@ -21,6 +21,7 @@ import java.util.List;
 
 public class FAItemRegistry {
     public static final List<Item> ITEMS = new ArrayList<>();
+    public static final ItemArmor.ArmorMaterial ANCIENT_HELMET_MATERIAL = EnumHelper.addArmorMaterial("AncientHelmet", "fossil:armor_ancient_helmet", 15, new int[]{2, 5, 6, 2}, 9, SoundEvents.ITEM_ARMOR_EQUIP_IRON, 0.0F);
     public static final ItemArmor.ArmorMaterial BONE = EnumHelper.addArmorMaterial("Bone", "fossil:armor_bone", 25, new int[]{2, 7, 6, 2}, 15, SoundEvents.ITEM_ARMOR_EQUIP_CHAIN, 0F);
     public static final Item.ToolMaterial SCARAB_MATERIAL = EnumHelper.addToolMaterial("Scarab", 3, 1861, 8.0F, 4.0F, 25);
     public static final Item.ToolMaterial TOOTH_DAGGER_MATERIAL = EnumHelper.addToolMaterial("toothDagger", 3, 250, 70.0F, 1.5F, 25);

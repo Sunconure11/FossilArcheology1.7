@@ -11,6 +11,7 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.IEntityLivingData;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -93,7 +94,7 @@ public class EntityDinosaurEgg extends EntityLiving implements IEntityAdditional
     }
 
     public String getTexture() {
-        return "fossil:textures/model/egg/" + selfType.name() + "_Egg.png";
+        return "fossil:textures/model/egg/" + selfType.friendlyName + "_Egg.png";
     }
 
     private void setPedia() {
@@ -161,13 +162,13 @@ public class EntityDinosaurEgg extends EntityLiving implements IEntityAdditional
                         if (prehistoricEntity.type != PrehistoricEntityType.TYRANNOSAURUS && prehistoricEntity.type != PrehistoricEntityType.ALLOSAURUS && prehistoricEntity.type != PrehistoricEntityType.SARCOSUCHUS) {
                             prehistoricEntity.setTamed(true);
                             prehistoricEntity.func_152115_b(player.getDisplayName().toString());
-                            prehistoricEntity.setOwnerDisplayName(player.getDisplayName().toString());
+                            prehistoricEntity.setOwnerDisplayName(player.getName().toString());
                             prehistoricEntity.currentOrder = OrderType.WANDER;
                             prehistoricEntity.setHealth((float) prehistoricEntity.baseHealth);
 
                         }
                     }
-                    prehistoricEntity.onInitialSpawn(null,null);
+                    prehistoricEntity.onInitialSpawn(world.getDifficultyForLocation(new BlockPos(prehistoricEntity)), (IEntityLivingData)null);
                     prehistoricEntity.setAgeInDays(0);
                     prehistoricEntity.updateAbilities();
 
