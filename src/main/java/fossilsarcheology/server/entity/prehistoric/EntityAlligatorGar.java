@@ -7,7 +7,7 @@ import net.minecraft.world.World;
 public class EntityAlligatorGar extends EntityFishBase {
     public EntityAlligatorGar(World par1World) {
         super(par1World, PrehistoricEntityType.ALLIGATOR_GAR);
-        this.setSize(1.9F, 1.2F);
+        this.setSize(1.9F, 0.95F);
     }
 
     @Override

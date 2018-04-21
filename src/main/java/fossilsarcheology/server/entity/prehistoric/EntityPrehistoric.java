@@ -1688,7 +1688,7 @@ public abstract class EntityPrehistoric extends EntityTameable implements IPrehi
             renderYawOffset = rotationYaw;
             this.rotationYaw = passenger.rotationYaw;
         }
-        if (this.isOwner(this.getRidingPlayer()) && this.getAttackTarget() != this.getRidingPlayer()) {
+        if (this.getRidingPlayer() != null && this.getRidingPlayer() instanceof  EntityPlayer && this.isOwner(this.getRidingPlayer()) && this.getAttackTarget() != this.getRidingPlayer()) {
             rotationYaw = renderYawOffset;
             rotationYaw = this.getRidingPlayer().rotationYaw;
             float radius = ridingXZ * (0.7F * getAgeScale()) * -3;

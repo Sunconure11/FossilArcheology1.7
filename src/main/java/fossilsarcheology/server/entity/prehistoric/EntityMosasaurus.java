@@ -26,7 +26,9 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
 
     public EntityMosasaurus(World world) {
         super(world, PrehistoricEntityType.MOSASAURUS, 2, 9, 12, 70, 0.3, 0.35);
-        this.tasks.addTask(1, this.aiSit);
+        this.tasks.addTask(0, new DinoAIFindWaterTarget(this, 10, true));
+        this.tasks.addTask(1, new DinoAIGetInWater(this, 1.0D));
+        this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new DinoAIRiding(this, 1.0F));
         this.tasks.addTask(4, new DinoAIEatFeeders(this, 1));
         this.tasks.addTask(4, new DinoAIEatItems(this, 1));
@@ -144,7 +146,6 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
     @Override
     public void onLivingUpdate() {
         super.onLivingUpdate();
-
         if (this.getAttackTarget() != null) {
             if (getAttackBounds().intersects(this.getAttackTarget().getEntityBoundingBox())) {
                 if (!this.isEntitySmallerThan(this.getAttackTarget(), 2F * (this.getAgeScale() / this.maxSize))) {
@@ -166,14 +167,10 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
 
     }
 
-    @Override
-    public void updateRidden() {
-        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
-            super.updateRidden();
-            return;
-        }
-        if (this.getPassengers().get(0) != null && this.getPassengers().get(0) instanceof EntityLivingBase) {
-            Entity riddenByEntity = this.getPassengers().get(0);
+    public void updatePassenger(Entity passenger) {
+        super.updatePassenger(passenger);
+        if (passenger != null && passenger instanceof EntityLivingBase) {
+            Entity riddenByEntity = passenger;
             if((this.getAnimationTick() > 55 || this.getAnimation() == NO_ANIMATION)){
                 if(riddenByEntity instanceof EntityToyBase){
                     ((EntityToyBase) riddenByEntity).dismountEntity(this);
@@ -183,7 +180,7 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
                     riddenByEntity = null;
                     return;
                 }else{
-                    if(this.getPassengers().get(0) instanceof EntityLivingBase){
+                    if(passenger instanceof EntityLivingBase){
                         ((EntityLivingBase)riddenByEntity).attackEntityFrom(DamageSource.causeMobDamage(this), Math.max(((EntityLivingBase) riddenByEntity).getMaxHealth(), 100));
 
                     }
@@ -199,6 +196,13 @@ public class EntityMosasaurus extends EntityPrehistoricSwimming {
             double extraZ = (double) (radius * MathHelper.cos(angle));
             double extraY = 0.05F * (getAgeScale());
             riddenByEntity.setPosition(this.posX + extraX, this.posY + extraY, this.posZ + extraZ);
+        }
+    }
+
+    @Override
+    public void updateRidden() {
+        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
+            super.updateRidden();
         }
     }
 

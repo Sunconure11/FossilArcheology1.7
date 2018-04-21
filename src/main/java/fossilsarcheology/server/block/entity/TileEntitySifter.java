@@ -81,7 +81,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
                 return var3;
             }
         } else {
-            return null;
+            return ItemStack.EMPTY;
         }
     }
 
@@ -95,7 +95,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
     public void setInventorySlotContents(int var1, ItemStack var2) {
         this.stacks.set(var1, var2);
 
-        if (var2 != null && var2.getCount() > this.getInventoryStackLimit()) {
+        if (var2 != ItemStack.EMPTY && var2.getCount() > this.getInventoryStackLimit()) {
             var2.setCount(this.getInventoryStackLimit());
         }
     }
@@ -213,7 +213,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
         this.RawIndex = -1;
         int var1;
         for (var1 = 0; var1 < 1; ++var1) {
-            if (this.stacks.get(var1) != null) {
+            if (this.stacks.get(var1) != ItemStack.EMPTY) {
                 Item input = this.stacks.get(var1).getItem();
                 ItemStack itemstack = this.stacks.get(var1);
                 if ((input == Item.getItemFromBlock(Blocks.SAND)) || (input == Item.getItemFromBlock(Blocks.DIRT)) || (input == Item.getItemFromBlock(Blocks.GRAVEL)) || (input == Item.getItemFromBlock(Blocks.CLAY)) || (input == Item.getItemFromBlock(FABlockRegistry.VOLCANIC_ASH))) {
@@ -226,7 +226,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
             return false;
         } else {
             for (var1 = 5; var1 > 0; --var1) {
-                if (this.stacks.get(var1) == null) {
+                if (this.stacks.get(var1) == ItemStack.EMPTY) {
                     this.SpaceIndex = var1;
                     break;
                 }
@@ -237,7 +237,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
 
     public void smeltItem() {
         if (this.canSmelt()) {
-            ItemStack result = null;
+            ItemStack result = ItemStack.EMPTY;
             int randomloot = (new Random()).nextInt(100);
             double random = (new Random()).nextInt(100);
             int var3;
@@ -245,7 +245,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
             if (this.stacks.get(this.RawIndex).getItem() == Item.getItemFromBlock(Blocks.SAND) || this.stacks.get(this.RawIndex).getItem() == Item.getItemFromBlock(Blocks.DIRT) || this.stacks.get(this.RawIndex).getItem() == Item.getItemFromBlock(Blocks.GRAVEL) || this.stacks.get(this.RawIndex).getItem() == Item.getItemFromBlock(Blocks.CLAY) || this.stacks.get(this.RawIndex).getItem() == Item.getItemFromBlock(FABlockRegistry.VOLCANIC_ASH)) {
                 if (randomloot < 80) {
                     if (random < 75) {
-                        result = null;
+                        result = ItemStack.EMPTY;
                     } else {
                         result = this.stacks.get(this.SpaceIndex);
                     }
@@ -279,10 +279,10 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
                     }
                 }
             }
-            if (result != null) {
+            if (result != ItemStack.EMPTY) {
                 for (int slots = 1; slots < 5; slots++) {
                     ItemStack stackInSlot = this.stacks.get(slots);
-                    if (stackInSlot != null) {
+                    if (stackInSlot != ItemStack.EMPTY) {
                         if (stackInSlot.isItemEqual(result) && stackInSlot.getCount() + result.getCount() < 64) {
                             stackInSlot.grow(result.getCount());
                             if (this.stacks.get(this.RawIndex).getCount() > 1) {
@@ -292,7 +292,7 @@ public class TileEntitySifter extends TileEntity implements IInventory, ISidedIn
                             }
                             break;
                         }
-                    } else if (stackInSlot == null) {
+                    } else if (stackInSlot == ItemStack.EMPTY) {
                         this.stacks.set(slots, result);
                         this.stacks.get(this.RawIndex).shrink(1);
                         break;

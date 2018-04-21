@@ -25,7 +25,7 @@ public class EntityNautilus extends EntityFishBase {
     private static final DataParameter<Boolean> ISINSHELL = EntityDataManager.<Boolean>createKey(EntityNautilus.class, DataSerializers.BOOLEAN);
     public EntityNautilus(World world) {
         super(world, PrehistoricEntityType.NAUTILUS);
-        this.setSize(0.8F, 1F);
+        this.setSize(0.8F, 0.95F);
     }
 
     @Override

@@ -25,7 +25,9 @@ public class EntityLiopleurodon extends EntityPrehistoricSwimming {
 
     public EntityLiopleurodon(World world) {
         super(world, PrehistoricEntityType.LIOPLEURODON, 2, 12, 10, 45, 0.3, 0.4);
-        this.tasks.addTask(1, this.aiSit);
+        this.tasks.addTask(0, new DinoAIFindWaterTarget(this, 10, true));
+        this.tasks.addTask(1, new DinoAIGetInWater(this, 1.0D));
+        this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new DinoAIRiding(this, 1.5));
         this.tasks.addTask(4, new DinoAIEatFeeders(this, 1));
         this.tasks.addTask(4, new DinoAIEatItems(this, 1));
@@ -170,15 +172,10 @@ public class EntityLiopleurodon extends EntityPrehistoricSwimming {
 
     }
 
-    @Override
-    public void updateRidden() {
-        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
-            super.updateRidden();
-            return;
-        }
-        if (this.getPassengers().get(0) != null && this.getPassengers().get(0) instanceof EntityLivingBase) {
-            Entity riddenByEntity = this.getPassengers().get(0);
-
+    public void updatePassenger(Entity passenger) {
+        super.updatePassenger(passenger);
+        if (passenger != null && passenger instanceof EntityLivingBase) {
+            Entity riddenByEntity = passenger;
             if((this.getAnimationTick() > 55 || this.getAnimation() == NO_ANIMATION)){
                 if(riddenByEntity instanceof EntityToyBase){
                     ((EntityToyBase) riddenByEntity).dismountEntity(this);
@@ -188,7 +185,10 @@ public class EntityLiopleurodon extends EntityPrehistoricSwimming {
                     riddenByEntity = null;
                     return;
                 }else{
-                    riddenByEntity.attackEntityFrom(DamageSource.causeMobDamage(this), Math.max(((EntityLivingBase) riddenByEntity).getMaxHealth(), 100));
+                    if(passenger instanceof EntityLivingBase){
+                        ((EntityLivingBase)riddenByEntity).attackEntityFrom(DamageSource.causeMobDamage(this), Math.max(((EntityLivingBase) riddenByEntity).getMaxHealth(), 100));
+
+                    }
                     this.onKillEntity((EntityLivingBase) riddenByEntity);
                 }
             }
@@ -202,6 +202,13 @@ public class EntityLiopleurodon extends EntityPrehistoricSwimming {
             double extraY = 0.15F * (getAgeScale());
             super.updateRidden();
             riddenByEntity.setPosition(this.posX + extraX, this.posY + extraY, this.posZ + extraZ);
+        }
+    }
+
+    @Override
+    public void updateRidden() {
+        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
+            super.updateRidden();
         }
     }
 

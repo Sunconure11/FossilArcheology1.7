@@ -21,7 +21,9 @@ public class EntityPlesiosaurus extends EntityPrehistoricSwimming {
     public EntityPlesiosaurus(World world) {
         super(world, PrehistoricEntityType.PLESIOSAUR, 2, 12, 10, 30, 0.2, 0.3);
         FISH_ANIMATION = Animation.create(40);
-        this.tasks.addTask(1, this.aiSit);
+        this.tasks.addTask(0, new DinoAIFindWaterTarget(this, 10, true));
+        this.tasks.addTask(1, new DinoAIGetInWater(this, 1.0D));
+        this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new DinoAIEatFeeders(this, 1));
         this.tasks.addTask(3, new DinoAIEatItems(this, 1));
         this.tasks.addTask(4, new DinoAIMakeFish(this));

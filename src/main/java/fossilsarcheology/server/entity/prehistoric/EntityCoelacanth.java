@@ -24,7 +24,7 @@ import fossilsarcheology.server.item.FAItemRegistry;
 public class EntityCoelacanth extends EntityFishBase {
     public EntityCoelacanth(World par1World) {
         super(par1World, PrehistoricEntityType.COELACANTH);
-        this.setSize(1.9F, 1F);
+        this.setSize(1.9F, 0.95F);
     }
 
     @Override

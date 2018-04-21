@@ -37,7 +37,8 @@ public class EntitySarcosuchus extends EntityPrehistoricSwimming {
         super(world, PrehistoricEntityType.SARCOSUCHUS, 1, 3, 15, 70, 0.25, 0.25);
         this.setActualSize(2.0F, 1.0F);
         isAmphibious = true;
-        this.tasks.addTask(1, this.aiSit);
+        this.tasks.addTask(1, new DinoAIFindWaterTarget(this, 10, true));
+        this.tasks.addTask(2, this.aiSit);
         this.tasks.addTask(3, new DinoAIRiding(this, 1.0F));
         this.tasks.addTask(3, new DinoAIAttackOnCollide(this, 1.5D, false));
         this.tasks.addTask(4, new DinoAIEatFeeders(this, 1));

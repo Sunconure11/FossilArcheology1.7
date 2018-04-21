@@ -13,7 +13,7 @@ import net.minecraft.world.World;
 
 public abstract class EntityPrehistoricFlying extends EntityPrehistoric {
 
-    public BlockPos currentTarget;
+    public BlockPos airTarget;
     public static final int FLYING_INDEX = 29;
     private boolean isFlying;
     public float flyProgress;
@@ -25,7 +25,7 @@ public abstract class EntityPrehistoricFlying extends EntityPrehistoric {
     }
 
     public boolean isDirectPathBetweenPoints(Vec3d vec1, Vec3d vec2) {
-        RayTraceResult movingobjectposition = this.world.rayTraceBlocks(vec1, new Vec3d(vec2.x, vec2.y + (double) this.height * 0.5D, vec2.z), false);
+        RayTraceResult movingobjectposition = this.world.rayTraceBlocks(vec1, new Vec3d(vec2.x, vec2.y + (double) this.height * 0.5D, vec2.z), false, true, false);
         return movingobjectposition == null || movingobjectposition.typeOfHit != RayTraceResult.Type.BLOCK;
     }
 
@@ -38,7 +38,7 @@ public abstract class EntityPrehistoricFlying extends EntityPrehistoric {
     @Override
     public void writeEntityToNBT(NBTTagCompound compound) {
         super.writeEntityToNBT(compound);
-        compound.setBoolean("Flying", this.isFlying);
+        compound.setBoolean("Flying", this.isFlying());
     }
 
     @Override
@@ -82,15 +82,11 @@ public abstract class EntityPrehistoricFlying extends EntityPrehistoric {
         if (!this.isFlying() && !this.isMovementBlocked() && rand.nextInt(400) == 0 && !this.world.isRemote && this.isAdult() && this.getControllingPassenger() == null && this.onGround) {
             this.setFlying(true);
         }
-        if(ticksFlying > 80 && this.onGround){
+        if(!this.world.isRemote && ticksFlying > 80 && this.onGround){
             this.setFlying(false);
-        }
-        if(!this.isFlying() && this.currentTarget != null && !this.onGround){
-            this.setFlying(true);
         }
         if (this.isFlying() && getAttackTarget() == null) {
             flyAround();
-            ticksFlying++;
         } else if (getAttackTarget() != null) {
             flyTowardsTarget();
         }
@@ -107,41 +103,42 @@ public abstract class EntityPrehistoricFlying extends EntityPrehistoric {
     public void setFlying(boolean flying) {
         this.dataManager.set(FLYING, flying);
         if (!world.isRemote) {
-            this.isSleeping = flying;
+            this.isFlying = flying;
         }
     }
 
     public void flyAround() {
-        if (currentTarget != null) {
-            if (!isDirectPathBetweenPoints(new Vec3d(this.posY, this.posY, this.posZ), new Vec3d(currentTarget.getX(), currentTarget.getY(), currentTarget.getZ()))) {
-                currentTarget = null;
-            }
-            if (!isTargetInAir() || this.getDistance(currentTarget.getX(), currentTarget.getY(), currentTarget.getZ()) < 3F || ticksFlying > 6000) {
-                currentTarget = null;
+        if (airTarget != null && this.isFlying()) {
+            if (!isTargetInAir() || !this.isFlying()) {
+                airTarget = null;
             }
             flyTowardsTarget();
         }
     }
 
     public void flyTowardsTarget() {
-        if (currentTarget != null && isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3d(currentTarget.getX(), this.posY, currentTarget.getY())) > 3) {
-            double targetX = currentTarget.getX() + 0.5D - posX;
-            double targetY = currentTarget.getY() + 0.5D - posY;
-            double targetZ = currentTarget.getZ() + 0.5D - posZ;
-            motionX += (Math.signum(targetX) * 0.5D - motionX) * 0.100000000372529 * getFlySpeed();
-            motionY += (Math.signum(targetY) * 0.5D - motionY) * 0.100000000372529 * getFlySpeed();
-            motionZ += (Math.signum(targetZ) * 0.5D - motionZ) * 0.100000000372529 * getFlySpeed();
+        if (airTarget != null && isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3d(airTarget.getX(), this.posY, airTarget.getZ())) > 3) {
+            double targetX = airTarget.getX() + 0.5D - posX;
+            double targetY = Math.min(airTarget.getY(), 256) + 1D - posY;
+            double targetZ = airTarget.getZ() + 0.5D - posZ;
+            motionX += (Math.signum(targetX) * 0.5D - motionX) * 0.100000000372529 * 2;
+            motionY += (Math.signum(targetY) * 0.5D - motionY) * 0.100000000372529 * 2;
+            motionZ += (Math.signum(targetZ) * 0.5D - motionZ) * 0.100000000372529 * 2;
             float angle = (float) (Math.atan2(motionZ, motionX) * 180.0D / Math.PI) - 90.0F;
             float rotation = MathHelper.wrapDegrees(angle - rotationYaw);
             moveForward = 0.5F;
+            prevRotationYaw = rotationYaw;
             rotationYaw += rotation;
         } else {
-            this.currentTarget = null;
+            this.airTarget = null;
         }
+       /* if (airTarget != null && isTargetInAir() && this.isFlying() && this.getDistanceSquared(new Vec3d(airTarget.getX(), this.posY, airTarget.getZ())) < 3) {
+            this.setFlying(false);
+        }*/
     }
 
     protected boolean isTargetInAir() {
-        return currentTarget != null && (world.getBlockState(currentTarget).getMaterial() == Material.AIR && world.getBlockState(currentTarget.up()).getMaterial() == Material.AIR);
+        return airTarget != null && ((world.getBlockState(airTarget).getMaterial() == Material.AIR) || world.getBlockState(airTarget).getMaterial() == Material.AIR);
     }
 
     public float getDistanceSquared(Vec3d vec) {

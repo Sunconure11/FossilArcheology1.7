@@ -37,6 +37,7 @@ public class EntitySpinosaurus extends EntityPrehistoricSwimming {
         this.setActualSize(1.5F, 1.0F);
         isAmphibious = true;
         FISH_ANIMATION = Animation.create(40);
+        this.tasks.addTask(0, new DinoAIFindWaterTarget(this, 10, true));
         this.tasks.addTask(1, this.aiSit);
         this.tasks.addTask(3, new DinoAIRiding(this, 1.5D));
         this.tasks.addTask(3, new DinoAIAttackOnCollide(this, 1.5D, false));
@@ -173,16 +174,11 @@ public class EntitySpinosaurus extends EntityPrehistoricSwimming {
         return 1;
     }
 
-    @Override
-    public void updateRidden() {
-        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
-            super.updateRidden();
-            return;
-        }
-        if (this.getPassengers().get(0) != null && this.getPassengers().get(0) instanceof EntityLivingBase) {
-            Entity riddenByEntity = this.getPassengers().get(0);
-
-            if((this.getAnimationTick() > 55 || this.getAnimation() == NO_ANIMATION) && riddenByEntity != null){
+    public void updatePassenger(Entity passenger) {
+        super.updatePassenger(passenger);
+        if (passenger != null && passenger instanceof EntityLivingBase) {
+            Entity riddenByEntity = passenger;
+            if((this.getAnimationTick() > 55 || this.getAnimation() == NO_ANIMATION)){
                 if(riddenByEntity instanceof EntityToyBase){
                     ((EntityToyBase) riddenByEntity).dismountEntity(this);
                     this.setAttackTarget(null);
@@ -191,10 +187,14 @@ public class EntitySpinosaurus extends EntityPrehistoricSwimming {
                     riddenByEntity = null;
                     return;
                 }else{
-                    riddenByEntity.attackEntityFrom(DamageSource.causeMobDamage(this), Math.max(((EntityLivingBase) riddenByEntity).getMaxHealth(), 100));
+                    if(passenger instanceof EntityLivingBase){
+                        ((EntityLivingBase)riddenByEntity).attackEntityFrom(DamageSource.causeMobDamage(this), Math.max(((EntityLivingBase) riddenByEntity).getMaxHealth(), 100));
+
+                    }
                     this.onKillEntity((EntityLivingBase) riddenByEntity);
                 }
             }
+
             riddenByEntity.setPosition(this.posX, this.posY + this.getMountedYOffset() + riddenByEntity.getYOffset(), this.posZ);
             float modTick_0 = this.getAnimationTick() - 15;
             float modTick_1 = this.getAnimationTick() > 15 ? 6 * MathHelper.sin((float) (Math.PI + (modTick_0 * 0.275F))) : 0;
@@ -209,6 +209,13 @@ public class EntitySpinosaurus extends EntityPrehistoricSwimming {
             double extraY = 0.8F * (getAgeScale() + (modTick_1 * 0.05) + (modTick_2 * 0.15) - 2);
             super.updateRidden();
             riddenByEntity.setPosition(this.posX + extraX, this.posY + extraY, this.posZ + extraZ);
+        }
+    }
+
+    @Override
+    public void updateRidden() {
+        if(this.getRidingPlayer() != null && this.isOwner(this.getRidingPlayer())){
+            super.updateRidden();
         }
     }
 

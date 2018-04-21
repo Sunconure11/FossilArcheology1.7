@@ -1,8 +1,10 @@
 package fossilsarcheology.server.entity;
 
 import fossilsarcheology.Revival;
+import fossilsarcheology.server.entity.ai.DinoAIFindWaterTarget;
 import fossilsarcheology.server.entity.ai.FishAIWaterFindTarget;
 import fossilsarcheology.server.entity.prehistoric.EntityNautilus;
+import fossilsarcheology.server.entity.prehistoric.EntityPrehistoricSwimming;
 import fossilsarcheology.server.entity.prehistoric.PrehistoricEntityType;
 import fossilsarcheology.server.item.FAItemRegistry;
 import net.ilexiconn.llibrary.client.model.tools.ChainBuffer;
@@ -46,7 +48,7 @@ public abstract class EntityFishBase extends EntityTameable {
         super(world);
         this.moveHelper = new EntityFishBase.SwimmingMoveHelper();
         this.navigator = new PathNavigateSwimmer(this, world);
-        this.tasks.addTask(1, new FishAIWaterFindTarget(this));
+        this.tasks.addTask(1, new DinoAIFindWaterTarget(this, 10, true));
         this.tasks.addTask(2, new EntityAILookIdle(this));
         this.selfType = selfType;
         if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -105,8 +107,9 @@ public abstract class EntityFishBase extends EntityTameable {
     @Override
     public void onUpdate() {
         super.onUpdate();
-        if(this.height != 1F){
-            this.height = 1F;
+
+        if(this.height != 0.95F){
+            this.height = 0.95F;
         }
         Revival.PROXY.calculateChainBuffer(this);
         if (this.isInWater() && this.getClosestMate() != null && this.getGrowingAge() == 0 && this.getClosestMate().getGrowingAge() == 0 && !this.world.isRemote) {
@@ -143,7 +146,7 @@ public abstract class EntityFishBase extends EntityTameable {
     }
 
     public boolean isInWater(){
-        return this.inWater || this.isChild() & this.isInsideOfMaterial(Material.WATER);
+        return super.isInWater() || this.isInsideOfMaterial(Material.WATER);
     }
 
     protected boolean isTargetInWater() {
@@ -247,12 +250,66 @@ public abstract class EntityFishBase extends EntityTameable {
     }
 
     @Override
-    public void travel(float strafe, float forward, float vertical) {
+    public void travel(float strafe, float vertical, float forward) {
+        float f4;
+        if(this.isSitting()){
+            super.travel(0, 0, 0);
+            return;
+        }
+        if (this.isBeingRidden() && this.canBeSteered()) {
+            EntityLivingBase controller = (EntityLivingBase) this.getControllingPassenger();
+            if (controller != null) {
+                strafe = controller.moveStrafing * 0.5F;
+                forward = controller.moveForward;
+                if (forward <= 0.0F) {
+                    forward *= 0.25F;
+                }
+                this.fallDistance = 0;
+                if (this.isInWater()) {
+                    this.moveRelative(strafe, vertical, forward,1F);
+                    f4 = 0.8F;
+                    float d0 = 3;
+                    if (!this.onGround) {
+                        d0 *= 0.5F;
+                    }
+                    if (d0 > 0.0F) {
+                        f4 += (0.54600006F - f4) * d0 / 3.0F;
+                    }
+                    //this.move(MoverType.SELF, this.motionX, this.motionY, this.motionZ);
+                    this.motionX *= (double) f4;
+                    this.motionX *= 0.900000011920929D;
+                    this.motionY *= 0.900000011920929D;
+                    this.motionY *= (double) f4;
+                    this.motionZ *= 0.900000011920929D;
+                    this.motionZ *= (double) f4;
+                    motionY += 0.01185D;
+                }else{
+                    forward = controller.moveForward * 0.25F;
+                    strafe = controller.moveStrafing * 0.125F;
+
+                    this.setAIMoveSpeed(2);
+                    super.travel(strafe, vertical, forward);
+                    return;
+                }
+                this.setAIMoveSpeed(2);
+                super.travel(strafe, vertical = 0, forward);
+                this.prevLimbSwingAmount = this.limbSwingAmount;
+                double deltaX = this.posX - this.prevPosX;
+                double deltaZ = this.posZ - this.prevPosZ;
+                double deltaY = this.posY - this.prevPosY;
+                float delta = MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 4.0F;
+                if (delta > 1.0F) {
+                    delta = 1.0F;
+                }
+                this.limbSwingAmount += (delta - this.limbSwingAmount) * 0.4F;
+                this.limbSwing += this.limbSwingAmount;
+                return;
+            }
+        }
         if (this.isServerWorld()) {
-            float f4;
             float f5;
             if (this.isInWater()) {
-                this.moveRelative(strafe, vertical, forward, 0.1F);
+                this.moveRelative(strafe, vertical, forward,0.1F);
                 f4 = 0.8F;
                 float d0 = (float) EnchantmentHelper.getDepthStriderModifier(this);
                 if (d0 > 3.0F) {
@@ -268,67 +325,28 @@ public abstract class EntityFishBase extends EntityTameable {
                 this.motionX *= (double) f4;
                 this.motionX *= 0.900000011920929D;
                 this.motionY *= 0.900000011920929D;
+                this.motionY *= (double) f4;
                 this.motionZ *= 0.900000011920929D;
                 this.motionZ *= (double) f4;
             } else {
-                float f2 = 0.91F;
-                if (this.onGround && this.isInWater()) {
-                    this.onGround = false;
-                }
-                if (this.onGround) {
-                    f2 = this.world.getBlockState(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ))).getBlock().slipperiness * 0.91F;
-                }
-                float f3 = 0.16277136F / (f2 * f2 * f2);
-                if (this.onGround) {
-                    f4 = this.getAIMoveSpeed() * f3;
-                } else {
-                    f4 = this.jumpMovementFactor;
-                }
-                this.move(MoverType.SELF, strafe, forward, f4);
-                f2 = 0.91F;
-                if (this.onGround) {
-                    f2 = this.world.getBlockState(new BlockPos(MathHelper.floor(this.posX), MathHelper.floor(this.getEntityBoundingBox().minY) - 1, MathHelper.floor(this.posZ))).getBlock().slipperiness * 0.91F;
-                }
-                if (this.isOnLadder()) {
-                        f5 = 0.15F;
-                        this.motionX = MathHelper.clamp(this.motionX, (double) (-f5), (double) f5);
-                        this.motionZ = MathHelper.clamp(this.motionZ, (double) (-f5), (double) f5);
-                        this.fallDistance = 0.0F;
-                        if (this.motionY < -0.15D) {
-                            this.motionY = -0.15D;
-                        }
-                    }
-                    this.move(MoverType.SELF, this.isInsideNautilusShell() ? 0 : this.motionX, this.isInsideNautilusShell() ? 0 : this.motionY, this.isInsideNautilusShell() ? 0 : this.motionZ);
-                    if (this.collidedHorizontally && this.isOnLadder()) {
-                        this.motionY = 0.2D;
-                    }
-                    if (this.world.isRemote && (!this.world.isBlockLoaded(new BlockPos((int) this.posX, 0, (int) this.posZ)) || !this.world.getChunkFromBlockCoords(new BlockPos((int) this.posX, 0, (int) this.posZ)).isLoaded())) {
-                        if (this.posY > 0.0D) {
-                            this.motionY = -0.1D;
-                        } else {
-                            this.motionY = 0.0D;
-                        }
-                    } else {
-                        this.motionY -= 0.08D;
-                    }
-                    this.motionY *= 0.9800000190734863D;
-                    this.motionX *= (double) f2;
-                    this.motionZ *= (double) f2;
+                super.travel(strafe, vertical, forward);
             }
         }
         this.prevLimbSwingAmount = this.limbSwingAmount;
         double deltaX = this.posX - this.prevPosX;
         double deltaZ = this.posZ - this.prevPosZ;
-        float delta = MathHelper.sqrt(deltaX * deltaX + deltaZ * deltaZ) * 4.0F;
+        double deltaY = this.posY - this.prevPosY;
+        float delta = MathHelper.sqrt(deltaX * deltaX + deltaY * deltaY + deltaZ * deltaZ) * 4.0F;
         if (delta > 1.0F) {
             delta = 1.0F;
         }
         this.limbSwingAmount += (delta - this.limbSwingAmount) * 0.4F;
         this.limbSwing += this.limbSwingAmount;
+
     }
 
     class SwimmingMoveHelper extends EntityMoveHelper {
-        private EntityFishBase swimmingEntity = EntityFishBase.this;
+        private EntityFishBase dinosaur = EntityFishBase.this;
 
         public SwimmingMoveHelper() {
             super(EntityFishBase.this);
@@ -336,19 +354,29 @@ public abstract class EntityFishBase extends EntityTameable {
 
         @Override
         public void onUpdateMoveHelper() {
-            if (this.action == EntityMoveHelper.Action.MOVE_TO && !this.swimmingEntity.getNavigator().noPath() && !swimmingEntity.isInsideNautilusShell()) {
-                double distanceX = this.posX - this.swimmingEntity.posX;
-                double distanceY = this.posY - this.swimmingEntity.posY;
-                double distanceZ = this.posZ - this.swimmingEntity.posZ;
-                double distance = Math.abs(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
-                distance = (double) MathHelper.sqrt(distance);
-                distanceY /= distance;
+            if (this.action == EntityMoveHelper.Action.MOVE_TO && !this.dinosaur.getNavigator().noPath() && !this.dinosaur.isBeingRidden()) {
+                double distanceX = this.posX - this.dinosaur.posX;
+                double distanceY = this.posY - this.dinosaur.posY;
+                double distanceZ = this.posZ - this.dinosaur.posZ;
+                double distance = Math.abs(distanceX * distanceX + distanceZ * distanceZ);
+                double distanceWithY = (double)MathHelper.sqrt(distanceX * distanceX + distanceY * distanceY + distanceZ * distanceZ);
+                distanceY = distanceY / distanceWithY;
                 float angle = (float) (Math.atan2(distanceZ, distanceX) * 180.0D / Math.PI) - 90.0F;
-                this.swimmingEntity.rotationYaw = this.limitAngle(this.swimmingEntity.rotationYaw, angle, 30.0F);
-                this.swimmingEntity.setAIMoveSpeed((float)swimmingEntity.getSwimSpeed() * 0.5F);
-                this.swimmingEntity.motionY += (double) this.swimmingEntity.getAIMoveSpeed() * distanceY * 0.1D;
+                this.dinosaur.rotationYaw = this.limitAngle(this.dinosaur.rotationYaw, angle, 30.0F);
+                this.dinosaur.setAIMoveSpeed((float) 2F);
+                this.dinosaur.motionY += (double)this.dinosaur.getAIMoveSpeed() * distanceY * 0.1D;
+                if (distance < (double)Math.max(1.0F, this.entity.width)) {
+                    float f = this.dinosaur.rotationYaw * 0.017453292F;
+                    this.dinosaur.motionX -= (double)(MathHelper.sin(f) * 0.35F);
+                    this.dinosaur.motionZ += (double)(MathHelper.cos(f) * 0.35F);
+                }
+            }else if (this.action == EntityMoveHelper.Action.JUMPING) {
+                this.entity.setAIMoveSpeed((float)(this.speed * this.entity.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue()));
+                if (this.entity.onGround && !this.dinosaur.isInWater()) {
+                    this.action = EntityMoveHelper.Action.WAIT;
+                }
             } else {
-                this.swimmingEntity.setAIMoveSpeed(0.0F);
+                this.dinosaur.setAIMoveSpeed(0.0F);
             }
         }
     }
